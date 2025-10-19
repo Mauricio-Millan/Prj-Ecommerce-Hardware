@@ -1,7 +1,11 @@
 package org.example.restecommercehardware.Service.Impl;
 
 import lombok.RequiredArgsConstructor;
+import org.example.restecommercehardware.Mapper.Categoria_Entity;
+import org.example.restecommercehardware.Mapper.Marca_Entity;
 import org.example.restecommercehardware.Mapper.Producto_Entity;
+import org.example.restecommercehardware.Repository.Categoria_Repository;
+import org.example.restecommercehardware.Repository.Marca_Repository;
 import org.example.restecommercehardware.Repository.Producto_Repository;
 import org.example.restecommercehardware.Service.Producto_Service;
 import org.springframework.stereotype.Service;
@@ -16,6 +20,8 @@ import java.util.Optional;
 public class Producto_Service_Impl implements Producto_Service {
 
     private final Producto_Repository productoRepository;
+    private final Categoria_Repository categoriaRepository;
+    private final Marca_Repository marcaRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -38,13 +44,17 @@ public class Producto_Service_Impl implements Producto_Service {
     @Override
     @Transactional(readOnly = true)
     public List<Producto_Entity> getProductosByCategoria(Long idCategoria) {
-        return productoRepository.findByIdCategoria(idCategoria);
+        Categoria_Entity categoria = categoriaRepository.findById(idCategoria)
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada con id: " + idCategoria));
+        return productoRepository.findByIdCategoria(categoria);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Producto_Entity> getProductosByMarca(Long idMarca) {
-        return productoRepository.findByIdMarca(idMarca);
+        Marca_Entity marca = marcaRepository.findById(idMarca)
+                .orElseThrow(() -> new RuntimeException("Marca no encontrada con id: " + idMarca));
+        return productoRepository.findByIdMarca(marca);
     }
 
     @Override
@@ -111,9 +121,9 @@ public class Producto_Service_Impl implements Producto_Service {
         if (origen.getSku() != null) {
             destino.setSku(origen.getSku());
         }
-        if (origen.getUrlImagen() != null) {
-            destino.setUrlImagen(origen.getUrlImagen());
-        }
+//        if (origen.getUrlImagen() != null) {
+//            destino.setUrlImagen(origen.getUrlImagen());
+//        }
         if (origen.getIdCategoria() != null) {
             destino.setIdCategoria(origen.getIdCategoria());
         }
@@ -122,4 +132,3 @@ public class Producto_Service_Impl implements Producto_Service {
         }
     }
 }
-

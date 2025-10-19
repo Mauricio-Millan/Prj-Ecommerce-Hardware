@@ -2,7 +2,9 @@ package org.example.restecommercehardware.Service.Impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.restecommercehardware.Mapper.Pedido_Entity;
+import org.example.restecommercehardware.Mapper.Usuario_Entity;
 import org.example.restecommercehardware.Repository.Pedido_Repository;
+import org.example.restecommercehardware.Repository.Usuario_Repository;
 import org.example.restecommercehardware.Service.Pedido_Service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,7 @@ import java.util.Optional;
 public class Pedido_Service_Impl implements Pedido_Service {
 
     private final Pedido_Repository pedidoRepository;
+    private final Usuario_Repository usuarioRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -32,7 +35,9 @@ public class Pedido_Service_Impl implements Pedido_Service {
     @Override
     @Transactional(readOnly = true)
     public List<Pedido_Entity> getPedidosByUsuario(Long idUsuario) {
-        return pedidoRepository.findByIdUsuario(idUsuario);
+        Usuario_Entity usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + idUsuario));
+        return pedidoRepository.findByIdUsuario(usuario);
     }
 
     @Override
@@ -91,4 +96,3 @@ public class Pedido_Service_Impl implements Pedido_Service {
         }
     }
 }
-

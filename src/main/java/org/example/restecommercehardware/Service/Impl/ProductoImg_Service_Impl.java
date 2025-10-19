@@ -2,6 +2,7 @@ package org.example.restecommercehardware.Service.Impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.restecommercehardware.Mapper.ProductoImg_Entity;
+import org.example.restecommercehardware.Mapper.Producto_Entity;
 import org.example.restecommercehardware.Repository.ProductoImg_Repository;
 import org.example.restecommercehardware.Repository.Producto_Repository;
 import org.example.restecommercehardware.Service.FileStorageService;
@@ -36,14 +37,16 @@ public class ProductoImg_Service_Impl implements ProductoImg_Service {
     @Override
     @Transactional(readOnly = true)
     public List<ProductoImg_Entity> getImagenesByProducto(Long idProducto) {
-        return productoImgRepository.findByIdProductoOrderByOrdenAsc(idProducto);
+        Producto_Entity producto = productoRepository.findById(idProducto)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + idProducto));
+        return productoImgRepository.findByIdProductoOrderByOrdenAsc(producto);
     }
 
     @Override
     @Transactional
     public ProductoImg_Entity createProductoImg(Long idProducto, MultipartFile file) {
         // Validar que el producto existe
-        productoRepository.findById(idProducto)
+        Producto_Entity producto = productoRepository.findById(idProducto)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + idProducto));
 
         // Guardar archivo y obtener ruta
@@ -51,11 +54,11 @@ public class ProductoImg_Service_Impl implements ProductoImg_Service {
 
         // Crear entidad
         ProductoImg_Entity productoImg = new ProductoImg_Entity();
-        productoImg.setIdProducto(idProducto);
+        productoImg.setIdProducto(producto);
         productoImg.setUrlImagen(rutaImagen);
 
         // Calcular orden (última posición + 1)
-        List<ProductoImg_Entity> imagenesExistentes = getImagenesByProducto(idProducto);
+        List<ProductoImg_Entity> imagenesExistentes = productoImgRepository.findByIdProductoOrderByOrdenAsc(producto);
         int nuevoOrden = imagenesExistentes.isEmpty() ? 1 :
                 imagenesExistentes.get(imagenesExistentes.size() - 1).getOrden() + 1;
         productoImg.setOrden(nuevoOrden);

@@ -1,14 +1,15 @@
 package org.example.restecommercehardware.Mapper;
 
 import jakarta.persistence.*;
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "resenas", schema = "dbo")
 public class Resena_Entity {
@@ -17,12 +18,15 @@ public class Resena_Entity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "id_producto")
-    private Long idProducto;
+    @ManyToOne
+    @JoinColumn(name = "id_producto")
+    private Producto_Entity idProducto;
 
-    @Column(name = "id_usuario")
-    private Long idUsuario;
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")
+    private Usuario_Entity idUsuario;
 
+    @NotNull
     @ColumnDefault("0")
     @Column(name = "calificacion", nullable = false)
     private Integer calificacion;

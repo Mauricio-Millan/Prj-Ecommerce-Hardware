@@ -1,8 +1,12 @@
 package org.example.restecommercehardware.Service.Impl;
 
 import lombok.RequiredArgsConstructor;
+import org.example.restecommercehardware.Mapper.Carrito_Entity;
 import org.example.restecommercehardware.Mapper.ItemsCarrito_Entity;
+import org.example.restecommercehardware.Mapper.Producto_Entity;
+import org.example.restecommercehardware.Repository.Carrito_Repository;
 import org.example.restecommercehardware.Repository.ItemsCarrito_Repository;
+import org.example.restecommercehardware.Repository.Producto_Repository;
 import org.example.restecommercehardware.Service.ItemsCarrito_Service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +19,8 @@ import java.util.Optional;
 public class ItemsCarrito_Service_Impl implements ItemsCarrito_Service {
 
     private final ItemsCarrito_Repository itemsCarritoRepository;
+    private final Carrito_Repository carritoRepository;
+    private final Producto_Repository productoRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -31,13 +37,17 @@ public class ItemsCarrito_Service_Impl implements ItemsCarrito_Service {
     @Override
     @Transactional(readOnly = true)
     public List<ItemsCarrito_Entity> getItemsByCarrito(Long idCarrito) {
-        return itemsCarritoRepository.findByIdCarrito(idCarrito);
+        Carrito_Entity carrito = carritoRepository.findById(idCarrito)
+                .orElseThrow(() -> new RuntimeException("Carrito no encontrado con id: " + idCarrito));
+        return itemsCarritoRepository.findByIdCarrito(carrito);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ItemsCarrito_Entity> getItemsByProducto(Long idProducto) {
-        return itemsCarritoRepository.findByIdProducto(idProducto);
+        Producto_Entity producto = productoRepository.findById(idProducto)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + idProducto));
+        return itemsCarritoRepository.findByIdProducto(producto);
     }
 
     @Override
@@ -80,4 +90,3 @@ public class ItemsCarrito_Service_Impl implements ItemsCarrito_Service {
         }
     }
 }
-

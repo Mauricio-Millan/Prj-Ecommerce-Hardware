@@ -2,7 +2,11 @@ package org.example.restecommercehardware.Service.Impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.restecommercehardware.Mapper.ItemsPedido_Entity;
+import org.example.restecommercehardware.Mapper.Pedido_Entity;
+import org.example.restecommercehardware.Mapper.Producto_Entity;
 import org.example.restecommercehardware.Repository.ItemsPedido_Repository;
+import org.example.restecommercehardware.Repository.Pedido_Repository;
+import org.example.restecommercehardware.Repository.Producto_Repository;
 import org.example.restecommercehardware.Service.ItemsPedido_Service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +19,8 @@ import java.util.Optional;
 public class ItemsPedido_Service_Impl implements ItemsPedido_Service {
 
     private final ItemsPedido_Repository itemsPedidoRepository;
+    private final Pedido_Repository pedidoRepository;
+    private final Producto_Repository productoRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -31,13 +37,17 @@ public class ItemsPedido_Service_Impl implements ItemsPedido_Service {
     @Override
     @Transactional(readOnly = true)
     public List<ItemsPedido_Entity> getItemsByPedido(Long idPedido) {
-        return itemsPedidoRepository.findByIdPedido(idPedido);
+        Pedido_Entity pedido = pedidoRepository.findById(idPedido)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con id: " + idPedido));
+        return itemsPedidoRepository.findByIdPedido(pedido);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ItemsPedido_Entity> getItemsByProducto(Long idProducto) {
-        return itemsPedidoRepository.findByIdProducto(idProducto);
+        Producto_Entity producto = productoRepository.findById(idProducto)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + idProducto));
+        return itemsPedidoRepository.findByIdProducto(producto);
     }
 
     @Override
@@ -80,4 +90,3 @@ public class ItemsPedido_Service_Impl implements ItemsPedido_Service {
         }
     }
 }
-

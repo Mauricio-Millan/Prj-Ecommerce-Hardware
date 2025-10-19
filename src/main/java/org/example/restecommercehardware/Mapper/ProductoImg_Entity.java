@@ -1,11 +1,13 @@
 package org.example.restecommercehardware.Mapper;
 
 import jakarta.persistence.*;
-import lombok.*;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.Nationalized;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "producto_img", schema = "dbo")
 public class ProductoImg_Entity {
@@ -14,9 +16,12 @@ public class ProductoImg_Entity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "id_producto")
-    private Long idProducto;
+    @ManyToOne
+    @JoinColumn(name = "id_producto")
+    private Producto_Entity idProducto;
 
+    @Size(max = 255)
+    @Nationalized
     @Column(name = "UrlImagen")
     private String urlImagen;
 

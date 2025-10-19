@@ -1,13 +1,14 @@
 package org.example.restecommercehardware.Mapper;
 
 import jakarta.persistence.*;
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "items_pedido", schema = "dbo")
 public class ItemsPedido_Entity {
@@ -16,15 +17,19 @@ public class ItemsPedido_Entity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "id_pedido")
-    private Long idPedido;
+    @ManyToOne
+    @JoinColumn(name = "id_pedido")
+    private Pedido_Entity idPedido;
 
-    @Column(name = "id_producto")
-    private Long idProducto;
+    @ManyToOne
+    @JoinColumn(name = "id_producto")
+    private Producto_Entity idProducto;
 
+    @NotNull
     @Column(name = "cantidad", nullable = false)
     private Integer cantidad;
 
+    @NotNull
     @Column(name = "precio_unitario", nullable = false, precision = 10, scale = 2)
     private BigDecimal precioUnitario;
 

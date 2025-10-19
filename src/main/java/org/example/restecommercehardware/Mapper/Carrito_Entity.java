@@ -1,14 +1,14 @@
 package org.example.restecommercehardware.Mapper;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "carrito", schema = "dbo")
 public class Carrito_Entity {
@@ -17,7 +17,8 @@ public class Carrito_Entity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "id_usuario")
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")
     private Usuario_Entity idUsuario;
 
     @ColumnDefault("getdate()")

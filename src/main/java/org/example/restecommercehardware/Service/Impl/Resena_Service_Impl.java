@@ -1,8 +1,12 @@
 package org.example.restecommercehardware.Service.Impl;
 
 import lombok.RequiredArgsConstructor;
+import org.example.restecommercehardware.Mapper.Producto_Entity;
 import org.example.restecommercehardware.Mapper.Resena_Entity;
+import org.example.restecommercehardware.Mapper.Usuario_Entity;
+import org.example.restecommercehardware.Repository.Producto_Repository;
 import org.example.restecommercehardware.Repository.Resena_Repository;
+import org.example.restecommercehardware.Repository.Usuario_Repository;
 import org.example.restecommercehardware.Service.Resena_Service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +20,8 @@ import java.util.Optional;
 public class Resena_Service_Impl implements Resena_Service {
 
     private final Resena_Repository resenaRepository;
+    private final Producto_Repository productoRepository;
+    private final Usuario_Repository usuarioRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -32,13 +38,17 @@ public class Resena_Service_Impl implements Resena_Service {
     @Override
     @Transactional(readOnly = true)
     public List<Resena_Entity> getResenasByProducto(Long idProducto) {
-        return resenaRepository.findByIdProducto(idProducto);
+        Producto_Entity producto = productoRepository.findById(idProducto)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + idProducto));
+        return resenaRepository.findByIdProducto(producto);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Resena_Entity> getResenasByUsuario(Long idUsuario) {
-        return resenaRepository.findByIdUsuario(idUsuario);
+        Usuario_Entity usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + idUsuario));
+        return resenaRepository.findByIdUsuario(usuario);
     }
 
     @Override
@@ -99,4 +109,3 @@ public class Resena_Service_Impl implements Resena_Service {
         }
     }
 }
-

@@ -2,7 +2,9 @@ package org.example.restecommercehardware.Service.Impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.restecommercehardware.Mapper.Carrito_Entity;
+import org.example.restecommercehardware.Mapper.Usuario_Entity;
 import org.example.restecommercehardware.Repository.Carrito_Repository;
+import org.example.restecommercehardware.Repository.Usuario_Repository;
 import org.example.restecommercehardware.Service.Carrito_Service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,7 @@ import java.util.Optional;
 public class Carrito_Service_Impl implements Carrito_Service {
 
     private final Carrito_Repository carritoRepository;
+    private final Usuario_Repository usuarioRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -32,7 +35,9 @@ public class Carrito_Service_Impl implements Carrito_Service {
     @Override
     @Transactional(readOnly = true)
     public Optional<Carrito_Entity> getCarritoByUsuario(Long idUsuario) {
-        return carritoRepository.findByIdUsuario(idUsuario);
+        Usuario_Entity usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + idUsuario));
+        return carritoRepository.findByIdUsuario(usuario);
     }
 
     @Override
@@ -63,4 +68,3 @@ public class Carrito_Service_Impl implements Carrito_Service {
         carritoRepository.deleteById(id);
     }
 }
-

@@ -1,12 +1,13 @@
 package org.example.restecommercehardware.Mapper;
 
 import jakarta.persistence.*;
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "items_carrito", schema = "dbo")
 public class ItemsCarrito_Entity {
@@ -15,12 +16,15 @@ public class ItemsCarrito_Entity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "id_carrito")
-    private Long idCarrito;
+    @ManyToOne
+    @JoinColumn(name = "id_carrito")
+    private Carrito_Entity idCarrito;
 
-    @Column(name = "id_producto")
-    private Long idProducto;
+    @ManyToOne
+    @JoinColumn(name = "id_producto")
+    private Producto_Entity idProducto;
 
+    @NotNull
     @ColumnDefault("1")
     @Column(name = "cantidad", nullable = false)
     private Integer cantidad;
