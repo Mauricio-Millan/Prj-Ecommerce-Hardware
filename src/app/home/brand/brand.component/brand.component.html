@@ -1,0 +1,39 @@
+<section class="bg-white py-12 overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Title -->
+    <h2 class="text-3xl font-bold text-gray-900 text-center mb-8">
+      Marcas de Confianza
+    </h2>
+    <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+      Trabajamos con las mejores marcas del mercado para garantizar productos de alta calidad
+    </p>
+
+    <!-- Infinite Carousel -->
+    <div class="relative">
+      <!-- Gradient Overlays -->
+      <div class="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
+      <div class="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
+
+      <!-- Carousel Track -->
+      <div class="carousel-track relative w-full overflow-hidden">
+        <div class="carousel-content flex gap-8 animate-scroll">
+          @for (brand of duplicatedBrands; track brand.id + '-' + $index) {
+            <div class="flex-shrink-0 w-[200px]">
+              <div class="bg-white rounded-xl p-6 flex items-center justify-center h-32 border border-gray-200 transition-all duration-300 hover:shadow-lg hover:border-indigo-300 hover:-translate-y-1 group">
+                <img 
+                  [src]="brand.logo" 
+                  [alt]="brand.name"
+                  class="max-w-full max-h-20 object-contain grayscale opacity-70 transition-all duration-300 group-hover:grayscale-0 group-hover:opacity-100">
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Optional: Pause on hover hint -->
+    <p class="text-center text-sm text-gray-500 mt-8">
+      Pasa el cursor sobre las marcas para pausar el carrusel
+    </p>
+  </div>
+</section>

@@ -1,0 +1,5 @@
+/* Pause animation on hover */
+.carousel-track:hover .carousel-content {
+  animation-play-state: paused;
+}
+

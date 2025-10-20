@@ -1,0 +1,62 @@
+<div class="relative w-full h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden bg-gray-900">
+  <!-- Slides Container -->
+  <div class="relative h-full">
+    @for (banner of banners; track banner.id) {
+      <div 
+        class="absolute inset-0 transition-all duration-700 ease-in-out"
+        [class.opacity-100]="currentSlide() === $index"
+        [class.opacity-0]="currentSlide() !== $index"
+        [class.translate-x-0]="currentSlide() === $index"
+        [class.translate-x-full]="currentSlide() < $index"
+        [class.-translate-x-full]="currentSlide() > $index">
+        <img 
+          [src]="banner.image" 
+          [alt]="banner.alt"
+          class="w-full h-full object-cover"
+          loading="eager">
+        
+        <!-- Overlay oscuro para mejor lectura -->
+        <div class="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent"></div>
+      </div>
+    }
+  </div>
+
+  <!-- Navigation Arrows -->
+  <button 
+    (click)="prevSlide()"
+    class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-900 p-3 rounded-full shadow-lg transition-all duration-200 hover:scale-110 z-10 group">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+    </svg>
+  </button>
+
+  <button 
+    (click)="nextSlide()"
+    class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-900 p-3 rounded-full shadow-lg transition-all duration-200 hover:scale-110 z-10 group">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+    </svg>
+  </button>
+
+  <!-- Dots Indicator -->
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-3 z-10">
+    @for (banner of banners; track banner.id) {
+      <button
+        (click)="goToSlide($index)"
+        [class.bg-white]="currentSlide() === $index"
+        [class.bg-white/50]="currentSlide() !== $index"
+        [class.w-12]="currentSlide() === $index"
+        [class.w-3]="currentSlide() !== $index"
+        class="h-3 rounded-full transition-all duration-300 hover:bg-white/80"
+        [attr.aria-label]="'Ir a banner ' + ($index + 1)">
+      </button>
+    }
+  </div>
+
+  <!-- Optional: Banner Content Overlay -->
+  <div class="absolute inset-0 flex items-center justify-center z-5 pointer-events-none">
+    <div class="text-center text-white px-4">
+      <!-- Puedes agregar texto sobre el banner aquí si lo necesitas -->
+    </div>
+  </div>
+</div>
