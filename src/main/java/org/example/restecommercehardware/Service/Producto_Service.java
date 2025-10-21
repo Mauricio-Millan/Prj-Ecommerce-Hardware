@@ -1,5 +1,6 @@
 package org.example.restecommercehardware.Service;
 
+import org.example.restecommercehardware.DTOs.ProductoDetalleDTO;
 import org.example.restecommercehardware.Mapper.Producto_Entity;
 
 import java.util.List;
@@ -15,5 +16,6 @@ public interface Producto_Service {
     Producto_Entity createProducto(Producto_Entity producto);
     Producto_Entity updateProducto(Long id, Producto_Entity producto);
     void deleteProducto(Long id);
+    List<ProductoDetalleDTO> getProductosConImagenPortada();
 }
 

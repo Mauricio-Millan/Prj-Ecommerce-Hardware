@@ -1,6 +1,7 @@
 package org.example.restecommercehardware.Controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.restecommercehardware.DTOs.ProductoDetalleDTO;
 import org.example.restecommercehardware.Mapper.Producto_Entity;
 import org.example.restecommercehardware.Service.Producto_Service;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,12 @@ public class Producto_Controller {
     @GetMapping
     public ResponseEntity<List<Producto_Entity>> getAllProductos() {
         List<Producto_Entity> productos = productoService.getAllProductos();
+        return ResponseEntity.ok(productos);
+    }
+
+    @GetMapping("/portada")
+    public ResponseEntity<List<ProductoDetalleDTO>> getProductosConImagenPortada() {
+        List<ProductoDetalleDTO> productos = productoService.getProductosConImagenPortada();
         return ResponseEntity.ok(productos);
     }
 

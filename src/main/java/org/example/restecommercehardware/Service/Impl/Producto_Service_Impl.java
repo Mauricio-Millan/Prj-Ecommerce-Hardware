@@ -1,6 +1,7 @@
 package org.example.restecommercehardware.Service.Impl;
 
 import lombok.RequiredArgsConstructor;
+import org.example.restecommercehardware.DTOs.ProductoDetalleDTO;
 import org.example.restecommercehardware.Mapper.Categoria_Entity;
 import org.example.restecommercehardware.Mapper.Marca_Entity;
 import org.example.restecommercehardware.Mapper.Producto_Entity;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -97,6 +99,28 @@ public class Producto_Service_Impl implements Producto_Service {
             throw new RuntimeException("Producto no encontrado con id: " + id);
         }
         productoRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductoDetalleDTO> getProductosConImagenPortada() {
+        List<Object[]> resultados = productoRepository.obtenerProductosConImagenPortada();
+
+        return resultados.stream()
+                .map(row -> new ProductoDetalleDTO(
+                        ((Number) row[0]).longValue(),  // id
+                        (String) row[1],                 // nombre
+                        (String) row[2],                 // descripcion
+                        row[3] != null ? ((Number) row[3]).doubleValue() : null,  // precio
+                        row[4] != null ? ((Number) row[4]).intValue() : null,     // stock
+                        (String) row[5],                 // sku
+                        (String) row[6],                 // imagen_portada
+                        row[7] != null ? ((Number) row[7]).longValue() : null,    // id_marca
+                        (String) row[8],                 // nombre_marca
+                        row[9] != null ? ((Number) row[9]).longValue() : null,    // id_categoria
+                        (String) row[10]                 // nombre_categoria
+                ))
+                .collect(Collectors.toList());
     }
 
     private void validarSkuUnico(String sku) {

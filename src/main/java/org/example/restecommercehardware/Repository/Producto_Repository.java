@@ -4,6 +4,7 @@ import org.example.restecommercehardware.Mapper.Categoria_Entity;
 import org.example.restecommercehardware.Mapper.Marca_Entity;
 import org.example.restecommercehardware.Mapper.Producto_Entity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,4 +17,7 @@ public interface Producto_Repository extends JpaRepository<Producto_Entity, Long
     List<Producto_Entity> findByIdMarca(Marca_Entity marca);
     List<Producto_Entity> findByNombreContainingIgnoreCase(String nombre);
     boolean existsBySku(String sku);
+
+    @Query(value = "EXEC ObtenerProductoConImagenPortada", nativeQuery = true)
+    List<Object[]> obtenerProductosConImagenPortada();
 }
