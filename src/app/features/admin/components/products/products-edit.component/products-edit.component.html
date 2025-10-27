@@ -1,0 +1,231 @@
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="mb-6">
+    <h2 class="text-3xl font-bold text-gray-900">
+      {{ isEditMode() ? 'Editar Producto' : 'Nuevo Producto' }}
+    </h2>
+    <p class="text-gray-600 mt-1">
+      {{ isEditMode() ? 'Modifica los datos del producto' : 'Completa el formulario para agregar un nuevo producto' }}
+    </p>
+  </div>
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="flex justify-center items-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+    </div>
+  }
+
+  <!-- Form -->
+  @if (!loading()) {
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="bg-white rounded-xl shadow-lg p-8 space-y-6">
+      
+      <!-- 🆕 Galería de Imágenes -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Imágenes del Producto</label>
+        
+        <!-- Grid de imágenes existentes + nuevas -->
+        @if (images().length > 0) {
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            @for (image of images(); track $index) {
+              <div 
+                class="relative group border-2 rounded-lg overflow-hidden cursor-move hover:border-indigo-500 transition-colors"
+                draggable="true"
+                (dragstart)="onDragStart($index)"
+                (dragover)="onDragOver($event)"
+                (drop)="onDrop($event, $index)">
+                
+                <!-- Imagen -->
+                <img [src]="image.preview" [alt]="'Imagen ' + (image.orden)" class="w-full h-32 object-cover">
+                
+                <!-- Badge de orden -->
+                <div class="absolute top-2 left-2 bg-indigo-600 text-white text-xs font-bold px-2 py-1 rounded">
+                  #{{ image.orden }}
+                </div>
+
+                <!-- Botón eliminar -->
+                <button 
+                  type="button"
+                  (click)="removeImage($index)"
+                  class="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+
+                <!-- Loading overlay -->
+                @if (image.uploading) {
+                  <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <svg class="animate-spin h-8 w-8 text-white" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Input File (múltiple) -->
+        <input 
+          type="file" 
+          accept="image/*"
+          multiple
+          (change)="onFileSelected($event)"
+          class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 cursor-pointer border border-gray-300 rounded-lg"
+        />
+        <p class="text-xs text-gray-500 mt-1">
+          📸 JPG, PNG o WEBP. Máximo 5MB por imagen. Puedes seleccionar múltiples archivos.
+          <br>💡 Arrastra las imágenes para cambiar su orden.
+        </p>
+      </div>
+
+      <!-- Nombre -->
+      <div>
+        <label for="nombre" class="block text-sm font-medium text-gray-700 mb-2">Nombre *</label>
+        <input 
+          id="nombre"
+          type="text" 
+          formControlName="nombre"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          placeholder="Ej: RTX 4090 Ti"
+        />
+        @if (productForm.get('nombre')?.invalid && productForm.get('nombre')?.touched) {
+          <p class="text-red-500 text-sm mt-1">El nombre es requerido (mínimo 3 caracteres)</p>
+        }
+      </div>
+
+      <!-- SKU -->
+      <div>
+        <label for="sku" class="block text-sm font-medium text-gray-700 mb-2">SKU *</label>
+        <input 
+          id="sku"
+          type="text" 
+          formControlName="sku"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          placeholder="Ej: GPU-RTX-4090"
+        />
+        @if (productForm.get('sku')?.invalid && productForm.get('sku')?.touched) {
+          <p class="text-red-500 text-sm mt-1">SKU requerido (solo letras mayúsculas, números y guiones)</p>
+        }
+      </div>
+
+      <!-- Descripción -->
+      <div>
+        <label for="descripcion" class="block text-sm font-medium text-gray-700 mb-2">Descripción *</label>
+        <textarea 
+          id="descripcion"
+          formControlName="descripcion"
+          rows="4"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          placeholder="Descripción detallada del producto..."
+        ></textarea>
+        @if (productForm.get('descripcion')?.invalid && productForm.get('descripcion')?.touched) {
+          <p class="text-red-500 text-sm mt-1">Descripción requerida (mínimo 10 caracteres)</p>
+        }
+      </div>
+
+      <!-- Grid: Precio y Stock -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Precio -->
+        <div>
+          <label for="precio" class="block text-sm font-medium text-gray-700 mb-2">Precio (MXN) *</label>
+          <input 
+            id="precio"
+            type="number" 
+            formControlName="precio"
+            min="0"
+            step="0.01"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            placeholder="0.00"
+          />
+          @if (productForm.get('precio')?.invalid && productForm.get('precio')?.touched) {
+            <p class="text-red-500 text-sm mt-1">Precio requerido (debe ser mayor a 0)</p>
+          }
+        </div>
+
+        <!-- Stock -->
+        <div>
+          <label for="stock" class="block text-sm font-medium text-gray-700 mb-2">Stock *</label>
+          <input 
+            id="stock"
+            type="number" 
+            formControlName="stock"
+            min="0"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            placeholder="0"
+          />
+          @if (productForm.get('stock')?.invalid && productForm.get('stock')?.touched) {
+            <p class="text-red-500 text-sm mt-1">Stock requerido</p>
+          }
+        </div>
+      </div>
+
+      <!-- Grid: Categoría y Marca -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Categoría -->
+        <div>
+          <label for="idCategoria" class="block text-sm font-medium text-gray-700 mb-2">Categoría *</label>
+          <select 
+            id="idCategoria"
+            formControlName="idCategoria"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+            <option [value]="null">Selecciona una categoría</option>
+            @for (category of categories(); track category.id) {
+              <option [value]="category.id">{{ category.nombre }}</option>
+            }
+          </select>
+          @if (productForm.get('idCategoria')?.invalid && productForm.get('idCategoria')?.touched) {
+            <p class="text-red-500 text-sm mt-1">Categoría requerida</p>
+          }
+        </div>
+
+        <!-- Marca -->
+        <div>
+          <label for="idMarca" class="block text-sm font-medium text-gray-700 mb-2">Marca *</label>
+          <select 
+            id="idMarca"
+            formControlName="idMarca"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+            <option [value]="null">Selecciona una marca</option>
+            @for (brand of brands(); track brand.id) {
+              <option [value]="brand.id">{{ brand.nombre }}</option>
+            }
+          </select>
+          @if (productForm.get('idMarca')?.invalid && productForm.get('idMarca')?.touched) {
+            <p class="text-red-500 text-sm mt-1">Marca requerida</p>
+          }
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="flex gap-4 pt-4">
+        <button 
+          type="submit"
+          [disabled]="submitting()"
+          class="flex-1 bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed font-medium transition-colors">
+          @if (submitting()) {
+            <span class="flex items-center justify-center gap-2">
+              <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Guardando...
+            </span>
+          } @else {
+            {{ isEditMode() ? 'Actualizar Producto' : 'Crear Producto' }}
+          }
+        </button>
+        
+        <button 
+          type="button"
+          (click)="cancel()"
+          [disabled]="submitting()"
+          class="flex-1 border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 disabled:opacity-50 font-medium transition-colors">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  }
+</div>

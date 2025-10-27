@@ -1,0 +1,64 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div>
+      <h2 class="text-3xl font-bold text-gray-900">Gestión de Categorías</h2>
+      <p class="text-gray-600 mt-1">Administra las categorías de productos</p>
+    </div>
+    
+    <a 
+      routerLink="/admin/categorias/nueva"
+      class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center gap-2 shadow-lg hover:shadow-xl">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      Nueva Categoría
+    </a>
+  </div>
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="flex justify-center items-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+    </div>
+  }
+
+  <!-- Grid de Categorías -->
+  @if (!loading()) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @if (categories().length === 0) {
+        <div class="col-span-full text-center py-12">
+          <p class="text-gray-500">No hay categorías registradas</p>
+        </div>
+      }
+      @for (category of categories(); track category.id) {
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100">
+          <div class="flex items-start justify-between mb-4">
+            <div class="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center">
+              <span class="text-2xl">🏷️</span>
+            </div>
+            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
+              ID: {{ category.id }}
+            </span>
+          </div>
+          
+          <h3 class="text-xl font-bold text-gray-900 mb-2">{{ category.nombre }}</h3>
+          <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ category.descripcion }}</p>
+          
+          <div class="flex gap-2 pt-4 border-t border-gray-100">
+            <a 
+              [routerLink]="['/admin/categorias/editar', category.id]"
+              class="flex-1 bg-blue-50 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors text-center font-medium">
+              ✏️ Editar
+            </a>
+            <button 
+              (click)="deleteCategory(category.id, category.nombre)"
+              class="flex-1 bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 transition-colors font-medium">
+              🗑️ Eliminar
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

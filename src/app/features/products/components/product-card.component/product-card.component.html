@@ -1,1 +1,84 @@
-<p>product-card.component works!</p>
+<div class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden group h-full flex flex-col">
+  <!-- Product Image -->
+  <div class="relative h-48 bg-gray-100 overflow-hidden">
+    <img 
+      [src]="getProductImage()" 
+      [alt]="product.nombre"
+      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+      (error)="$event.target.src='assets/placeholders/product-placeholder.png'"
+    />
+    
+    <!-- Stock Badge -->
+    @if (product.stock > 0) {
+      <span class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+        En Stock
+      </span>
+    } @else {
+      <span class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+        Agotado
+      </span>
+    }
+  </div>
+
+  <!-- Product Info -->
+  <div class="p-4 flex-1 flex flex-col">
+    <!-- Category and Brand -->
+    <div class="flex items-center gap-2 mb-2">
+      <span class="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
+        {{ product.nombreCategoria }}
+      </span>
+      <span class="text-xs text-gray-500">
+        {{ product.nombreMarca }}
+      </span>
+    </div>
+
+    <!-- Product Name -->
+    <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2 min-h-[3.5rem]">
+      {{ product.nombre }}
+    </h3>
+
+    <!-- Description -->
+    <p class="text-sm text-gray-600 mb-3 line-clamp-2 min-h-[2.5rem] flex-1">
+      {{ product.descripcion }}
+    </p>
+
+    <!-- Price and Stock Info -->
+    <div class="flex items-center justify-between mb-3">
+      <div>
+        <p class="text-2xl font-bold text-blue-600">
+          {{ formatPrice(product.precio) }}
+        </p>
+        <p class="text-xs text-gray-500">
+          Stock: {{ product.stock }} unidades
+        </p>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex gap-2">
+      <button 
+        (click)="onAddToCart()"
+        class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
+        [disabled]="product.stock === 0"
+      >
+        Agregar al Carrito
+      </button>
+      <button 
+        class="p-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+        title="Ver detalles"
+        [routerLink]="['/productos', product.id]"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- SKU -->
+    <p class="text-xs text-gray-400 mt-2">
+      SKU: {{ product.sku }}
+    </p>
+  </div>
+</div>
+

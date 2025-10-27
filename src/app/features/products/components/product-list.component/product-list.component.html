@@ -1,1 +1,30 @@
-<p>product-list.component works!</p>
+<!-- Loading State -->
+@if (loading) {
+  <div class="flex justify-center items-center h-64">
+    <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+  </div>
+}
+
+<!-- Products Grid -->
+@if (!loading && products.length > 0) {
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    @for (product of products; track product.id) {
+      <app-product-card 
+        [product]="product"
+        (addToCart)="onAddToCart($event)"
+      />
+    }
+  </div>
+}
+
+<!-- Empty State -->
+@if (!loading && products.length === 0) {
+  <div class="text-center py-16">
+    <svg class="w-24 h-24 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+    </svg>
+    <h3 class="text-xl font-semibold text-gray-700 mb-2">No hay productos disponibles</h3>
+    <p class="text-gray-500">No se encontraron productos con los filtros aplicados.</p>
+  </div>
+}
+

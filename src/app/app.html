@@ -1,1 +1,12 @@
-<router-outlet></router-outlet>
+<div class="flex flex-col min-h-screen">
+  <!-- Navbar - Siempre visible en todas las rutas -->
+  <app-navbar></app-navbar>
+
+  <!-- Contenido dinámico - Cambia según la ruta -->
+  <main class="flex-grow">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Footer - Siempre visible en todas las rutas -->
+  <app-footer></app-footer>
+</div>
