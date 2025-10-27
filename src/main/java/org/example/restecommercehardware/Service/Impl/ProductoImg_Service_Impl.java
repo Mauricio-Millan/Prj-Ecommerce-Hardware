@@ -68,14 +68,15 @@ public class ProductoImg_Service_Impl implements ProductoImg_Service {
 
     @Override
     @Transactional
-    public ProductoImg_Entity updateProductoImg(Long id, ProductoImg_Entity productoImgActualizado) {
+    public ProductoImg_Entity updateProductoImg(Long id, Integer nuevoOrden) {
         ProductoImg_Entity productoImg = productoImgRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Imagen no encontrada con id: " + id));
 
-        if (productoImgActualizado.getOrden() != null) {
-            productoImg.setOrden(productoImgActualizado.getOrden());
+        if (nuevoOrden == null || nuevoOrden < 1) {
+            throw new IllegalArgumentException("El orden debe ser un número positivo");
         }
 
+        productoImg.setOrden(nuevoOrden);
         return productoImgRepository.save(productoImg);
     }
 

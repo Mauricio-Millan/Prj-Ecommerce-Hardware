@@ -37,18 +37,33 @@ public class ProductoImg_Controller {
     }
 
     @PostMapping(value = "/producto/{idProducto}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ProductoImg_Entity> uploadImagen(
+    public ResponseEntity<?> uploadImagen(
             @PathVariable Long idProducto,
             @RequestParam("file") MultipartFile file) {
-        ProductoImg_Entity nuevaImagen = productoImgService.createProductoImg(idProducto, file);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaImagen);
+        try {
+            ProductoImg_Entity nuevaImagen = productoImgService.createProductoImg(idProducto, file);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevaImagen);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al subir la imagen: " + e.getMessage());
+        }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductoImg_Entity> updateProductoImg(
+    @PatchMapping("/{id}/orden")
+    public ResponseEntity<?> updateProductoImg(
             @PathVariable Long id,
-            @RequestBody ProductoImg_Entity productoImg) {
-        return ResponseEntity.ok(productoImgService.updateProductoImg(id, productoImg));
+            @RequestParam Integer nuevoOrden) {
+        try {
+            ProductoImg_Entity imagenActualizada = productoImgService.updateProductoImg(id, nuevoOrden);
+            return ResponseEntity.ok(imagenActualizada);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Error de validación: " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al actualizar el orden: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")

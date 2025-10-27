@@ -11,6 +11,6 @@ public interface ProductoImg_Service {
     Optional<ProductoImg_Entity> getProductoImgById(Long id);
     List<ProductoImg_Entity> getImagenesByProducto(Long idProducto);
     ProductoImg_Entity createProductoImg(Long idProducto, MultipartFile file);
-    ProductoImg_Entity updateProductoImg(Long id, ProductoImg_Entity productoImg);
+    ProductoImg_Entity updateProductoImg(Long id, Integer nuevoOrden);
     void deleteProductoImg(Long id);
 }
