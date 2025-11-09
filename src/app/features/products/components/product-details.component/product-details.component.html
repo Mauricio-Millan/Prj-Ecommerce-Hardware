@@ -1,0 +1,232 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="container mx-auto px-4 py-16">
+      <div class="flex justify-center items-center h-96">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+      </div>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error()) {
+    <div class="container mx-auto px-4 py-16">
+      <div class="bg-red-50 border border-red-200 rounded-lg p-8 text-center max-w-lg mx-auto">
+        <svg class="w-16 h-16 text-red-600 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        </svg>
+        <h3 class="text-xl font-semibold text-red-800 mb-2">Error al cargar el producto</h3>
+        <p class="text-red-600 mb-4">{{ error() }}</p>
+        <div class="flex gap-3 justify-center">
+          <button 
+            (click)="goBack()"
+            class="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+          >
+            Volver al catálogo
+          </button>
+          <button 
+            (click)="loadProduct(product()?.id ?? 0)"
+            class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Reintentar
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Product Details -->
+  @if (!loading() && !error() && product()) {
+    <div class="container mx-auto px-4 py-8">
+      <!-- Breadcrumb -->
+      <nav class="mb-6 text-sm">
+        <ol class="flex items-center space-x-2 text-gray-600">
+          <li>
+            <a routerLink="/" class="hover:text-blue-600 transition-colors">Inicio</a>
+          </li>
+          <li>
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+            </svg>
+          </li>
+          <li>
+            <a routerLink="/catalogo" class="hover:text-blue-600 transition-colors">Catálogo</a>
+          </li>
+          <li>
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+            </svg>
+          </li>
+          <li class="text-gray-900 font-medium">{{ product()!.nombre }}</li>
+        </ol>
+      </nav>
+
+      <!-- Product Info Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white rounded-xl shadow-lg p-6 mb-8">
+        <!-- Left Column - Images -->
+        <div class="space-y-4">
+          <!-- Main Image -->
+          <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+            <img 
+              [src]="allImages[selectedImageIndex()]" 
+              [alt]="product()!.nombre"
+              class="w-full h-full object-contain p-4"
+              onerror="this.src='assets/placeholders/product-placeholder.png'"
+            />
+          </div>
+
+          <!-- Image Gallery (if multiple images) -->
+          @if (allImages.length > 1) {
+            <div class="grid grid-cols-4 gap-2">
+              @for (image of allImages; track $index) {
+                <button
+                  (click)="selectImage($index)"
+                  [class.ring-2]="selectedImageIndex() === $index"
+                  [class.ring-blue-600]="selectedImageIndex() === $index"
+                  class="aspect-square bg-gray-100 rounded-lg overflow-hidden hover:opacity-75 transition-opacity"
+                >
+                  <img 
+                    [src]="image" 
+                    [alt]="'Imagen ' + ($index + 1)"
+                    class="w-full h-full object-contain p-2"
+                  />
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Right Column - Product Info -->
+        <div class="space-y-6">
+          <!-- Brand & Category -->
+          <div class="flex gap-2">
+            <span class="inline-block px-3 py-1 bg-purple-100 text-purple-800 text-sm font-medium rounded-full">
+              {{ product()!.nombreMarca }}
+            </span>
+            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
+              {{ product()!.nombreCategoria }}
+            </span>
+          </div>
+
+          <!-- Product Name -->
+          <h1 class="text-3xl font-bold text-gray-900">
+            {{ product()!.nombre }}
+          </h1>
+
+          <!-- Price -->
+          <div class="border-t border-b py-4">
+            <p class="text-4xl font-bold text-blue-600">
+              {{ formatPrice(product()!.precio) }}
+            </p>
+          </div>
+
+          <!-- Stock Status -->
+          <div class="flex items-center gap-2">
+            @if (product()!.stock > 0) {
+              <div class="flex items-center text-green-600">
+                <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span class="font-semibold">En stock</span>
+              </div>
+              <span class="text-gray-600">({{ product()!.stock }} disponibles)</span>
+            } @else {
+              <div class="flex items-center text-red-600">
+                <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+                <span class="font-semibold">Agotado</span>
+              </div>
+            }
+          </div>
+
+          <!-- SKU -->
+          <div class="text-sm text-gray-600">
+            <span class="font-medium">SKU:</span> {{ product()!.sku }}
+          </div>
+
+          <!-- Quantity Selector -->
+          @if (product()!.stock > 0) {
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-700">Cantidad</label>
+              <div class="flex items-center gap-3">
+                <button
+                  (click)="decreaseQuantity()"
+                  [disabled]="quantity() <= 1"
+                  class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                  </svg>
+                </button>
+                <span class="w-12 text-center text-lg font-semibold">{{ quantity() }}</span>
+                <button
+                  (click)="increaseQuantity()"
+                  [disabled]="quantity() >= product()!.stock"
+                  class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-3">
+              <button
+                (click)="addToCart()"
+                [disabled]="addingToCart()"
+                class="flex-1 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                @if (addingToCart()) {
+                  <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Agregando...</span>
+                } @else {
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+                  </svg>
+                  <span>Agregar al carrito</span>
+                }
+              </button>
+              <button
+                (click)="buyNow()"
+                class="flex-1 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors"
+              >
+                Comprar ahora
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Tabs Section -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <div class="border-b border-gray-200 mb-6">
+          <nav class="flex gap-6">
+            <button class="px-4 py-3 font-medium text-blue-600 border-b-2 border-blue-600">
+              Descripción
+            </button>
+            <button class="px-4 py-3 font-medium text-gray-600 hover:text-blue-600 transition-colors">
+              Especificaciones
+            </button>
+          </nav>
+        </div>
+
+        <!-- Description Content -->
+        <div class="prose max-w-none">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">Descripción del producto</h3>
+          <p class="text-gray-700 leading-relaxed">
+            {{ product()!.descripcion }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Reviews Section -->
+      <app-product-review [productId]="product()!.id" />
+    </div>
+  }
+</div>

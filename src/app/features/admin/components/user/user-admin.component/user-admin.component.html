@@ -1,0 +1,253 @@
+<div class="p-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Gestión de Usuarios</h1>
+      <p class="text-gray-600 mt-1">Administra usuarios del sistema y roles</p>
+    </div>
+    <button 
+      (click)="navigateToCreate()"
+      class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      <span>Nuevo Usuario</span>
+    </button>
+  </div>
+
+  <!-- Filtros y Búsqueda -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Búsqueda -->
+      <div class="md:col-span-2">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Buscar usuarios</label>
+        <div class="relative">
+          <input 
+            type="text"
+            [value]="searchTerm()"
+            (input)="onSearchChange($event)"
+            placeholder="Buscar por nombre, apellido o email..."
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+          <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Filtro por Rol -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Filtrar por rol</label>
+        <select 
+          [value]="selectedRoleFilter()"
+          (change)="onRoleFilterChange($event)"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+          <option value="all">Todos los roles</option>
+          <option value="ADMIN">Administradores</option>
+          <option value="USER">Usuarios</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-200">
+      <div class="text-center">
+        <p class="text-2xl font-bold text-indigo-600">{{ users().length }}</p>
+        <p class="text-xs text-gray-600">Total Usuarios</p>
+      </div>
+      <div class="text-center">
+        <p class="text-2xl font-bold text-purple-600">{{ adminCount }}</p>
+        <p class="text-xs text-gray-600">Administradores</p>
+      </div>
+      <div class="text-center">
+        <p class="text-2xl font-bold text-blue-600">{{ userCount }}</p>
+        <p class="text-xs text-gray-600">Usuarios</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+      <svg class="animate-spin h-12 w-12 text-indigo-600 mx-auto mb-4" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <p class="text-gray-600">Cargando usuarios...</p>
+    </div>
+  }
+
+  <!-- Tabla de Usuarios -->
+  @if (!loading() && filteredUsers.length > 0) {
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Teléfono</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Registro</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            @for (user of paginatedUsers; track user.id) {
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                      {{ user.nombre.charAt(0).toUpperCase() }}{{ user.apellido.charAt(0).toUpperCase() }}
+                    </div>
+                    <div class="ml-3">
+                      <p class="text-sm font-medium text-gray-900">{{ user.nombre }} {{ user.apellido }}</p>
+                      <p class="text-xs text-gray-500">ID: {{ user.id }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <p class="text-sm text-gray-900">{{ user.correoElectronico }}</p>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span [class]="'px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ' + getRoleBadgeClass(user.rol)">
+                    {{ user.rol }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ user.numeroTelefono || 'N/A' }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatDate(user.creadoEn) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                  <div class="flex items-center justify-center space-x-2">
+                    <button 
+                      (click)="navigateToEdit(user.id)"
+                      class="text-indigo-600 hover:text-indigo-900 p-2 hover:bg-indigo-50 rounded-lg transition-colors"
+                      title="Editar">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                      </svg>
+                    </button>
+                    <button 
+                      (click)="confirmDelete(user)"
+                      class="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Eliminar">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginación -->
+      @if (totalPages > 1) {
+        <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
+          <div class="flex items-center justify-between">
+            <div class="text-sm text-gray-700">
+              Mostrando <span class="font-medium">{{ (currentPage() - 1) * pageSize + 1 }}</span> a 
+              <span class="font-medium">{{ Math.min(currentPage() * pageSize, filteredUsers.length) }}</span> de 
+              <span class="font-medium">{{ filteredUsers.length }}</span> resultados
+            </div>
+            <div class="flex space-x-2">
+              <button 
+                (click)="goToPage(currentPage() - 1)"
+                [disabled]="currentPage() === 1"
+                [class.opacity-50]="currentPage() === 1"
+                [class.cursor-not-allowed]="currentPage() === 1"
+                class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:hover:bg-white transition-colors">
+                Anterior
+              </button>
+              @for (page of [].constructor(totalPages); track $index) {
+                <button 
+                  (click)="goToPage($index + 1)"
+                  [class.bg-indigo-600]="currentPage() === $index + 1"
+                  [class.text-white]="currentPage() === $index + 1"
+                  [class.border-indigo-600]="currentPage() === $index + 1"
+                  class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
+                  {{ $index + 1 }}
+                </button>
+              }
+              <button 
+                (click)="goToPage(currentPage() + 1)"
+                [disabled]="currentPage() === totalPages"
+                [class.opacity-50]="currentPage() === totalPages"
+                [class.cursor-not-allowed]="currentPage() === totalPages"
+                class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:hover:bg-white transition-colors">
+                Siguiente
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!loading() && filteredUsers.length === 0) {
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+      <svg class="w-20 h-20 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+      </svg>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">No se encontraron usuarios</h3>
+      <p class="text-gray-600 mb-4">
+        @if (searchTerm() || selectedRoleFilter() !== 'all') {
+          No hay usuarios que coincidan con los filtros aplicados.
+        } @else {
+          Comienza creando tu primer usuario administrador.
+        }
+      </p>
+      @if (searchTerm() || selectedRoleFilter() !== 'all') {
+        <button 
+          (click)="searchTerm.set(''); selectedRoleFilter.set('all')"
+          class="text-indigo-600 hover:text-indigo-700 font-medium">
+          Limpiar filtros
+        </button>
+      } @else {
+        <button 
+          (click)="navigateToCreate()"
+          class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
+          Crear Primer Usuario
+        </button>
+      }
+    </div>
+  }
+</div>
+
+<!-- Modal de Confirmación de Eliminación -->
+@if (showDeleteModal()) {
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 animate-fadeIn">
+      <div class="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mx-auto mb-4">
+        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+      </div>
+      
+      <h3 class="text-xl font-bold text-gray-900 text-center mb-2">¿Eliminar usuario?</h3>
+      <p class="text-gray-600 text-center mb-6">
+        ¿Estás seguro de que deseas eliminar a 
+        <span class="font-semibold">{{ selectedUser()?.nombre }} {{ selectedUser()?.apellido }}</span>?
+        Esta acción no se puede deshacer.
+      </p>
+      
+      <div class="flex space-x-3">
+        <button 
+          (click)="cancelDelete()"
+          class="flex-1 px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+          Cancelar
+        </button>
+        <button 
+          (click)="deleteUser()"
+          class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors">
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+}

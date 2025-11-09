@@ -40,7 +40,7 @@
             </div>
             <h3 class="text-3xl font-bold text-gray-900 mb-1">
               @if (stat.label === 'Valor Inventario') {
-                {{ stat.value | currency:'MXN':'symbol':'1.0-0' }}
+                {{ stat.value | currency:'PEN':'symbol':'1.0-0' }}
               } @else {
                 {{ stat.value | number }}
               }

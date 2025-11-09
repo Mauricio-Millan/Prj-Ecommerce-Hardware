@@ -1,6 +1,6 @@
 <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden group h-full flex flex-col">
   <!-- Product Image -->
-  <div class="relative h-48 bg-gray-100 overflow-hidden">
+  <a [routerLink]="['/producto', product.id]" class="relative h-48 bg-gray-100 overflow-hidden block cursor-pointer">
     <img 
       [src]="getProductImage()" 
       [alt]="product.nombre"
@@ -18,7 +18,7 @@
         Agotado
       </span>
     }
-  </div>
+  </a>
 
   <!-- Product Info -->
   <div class="p-4 flex-1 flex flex-col">
@@ -33,9 +33,11 @@
     </div>
 
     <!-- Product Name -->
-    <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2 min-h-[3.5rem]">
-      {{ product.nombre }}
-    </h3>
+    <a [routerLink]="['/producto', product.id]" class="block cursor-pointer">
+      <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2 min-h-[3.5rem] hover:text-blue-600 transition-colors">
+        {{ product.nombre }}
+      </h3>
+    </a>
 
     <!-- Description -->
     <p class="text-sm text-gray-600 mb-3 line-clamp-2 min-h-[2.5rem] flex-1">
@@ -58,15 +60,23 @@
     <div class="flex gap-2">
       <button 
         (click)="onAddToCart()"
-        class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
-        [disabled]="product.stock === 0"
+        class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        [disabled]="product.stock === 0 || adding()"
       >
-        Agregar al Carrito
+        @if (adding()) {
+          <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>Agregando...</span>
+        } @else {
+          <span>Agregar al Carrito</span>
+        }
       </button>
       <button 
         class="p-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
         title="Ver detalles"
-        [routerLink]="['/productos', product.id]"
+        [routerLink]="['/producto', product.id]"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>

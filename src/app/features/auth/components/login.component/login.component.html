@@ -1,0 +1,320 @@
+<div class="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full">
+    
+    <!-- Card Container -->
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+      
+      <!-- Header con Tabs -->
+      <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-6">
+        <div class="flex items-center justify-center mb-4">
+          <svg class="w-12 h-12 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+            <line x1="6" y1="6" x2="6.01" y2="6"></line>
+            <line x1="6" y1="18" x2="6.01" y2="18"></line>
+          </svg>
+        </div>
+        
+        <div class="flex bg-white/10 backdrop-blur-sm rounded-lg p-1">
+          <button 
+            (click)="toggleMode()"
+            [class.bg-white]="isLoginMode()"
+            [class.text-indigo-600]="isLoginMode()"
+            [class.text-white]="!isLoginMode()"
+            class="flex-1 py-2 px-4 rounded-md font-semibold transition-all duration-300">
+            Iniciar Sesión
+          </button>
+          <button 
+            (click)="toggleMode()"
+            [class.bg-white]="!isLoginMode()"
+            [class.text-indigo-600]="!isLoginMode()"
+            [class.text-white]="isLoginMode()"
+            class="flex-1 py-2 px-4 rounded-md font-semibold transition-all duration-300">
+            Registrarse
+          </button>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="p-8">
+        
+        <!-- Mensaje de Error -->
+        @if (errorMessage()) {
+          <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+            <div class="flex items-start">
+              <svg class="w-5 h-5 text-red-500 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+              </svg>
+              <p class="text-sm text-red-700 font-medium">{{ errorMessage() }}</p>
+            </div>
+          </div>
+        }
+
+        <!-- FORMULARIO LOGIN -->
+        @if (isLoginMode()) {
+          <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()" class="space-y-6">
+            
+            <h2 class="text-2xl font-bold text-gray-900 text-center mb-6">
+              Bienvenido de nuevo
+            </h2>
+
+            <!-- Email -->
+            <div>
+              <label for="login-email" class="block text-sm font-semibold text-gray-700 mb-2">
+                Correo Electrónico
+              </label>
+              <input 
+                id="login-email"
+                type="email" 
+                formControlName="correoElectronico"
+                placeholder="tu@email.com"
+                [class.border-red-500]="isFieldInvalid(loginForm, 'correoElectronico')"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+              @if (isFieldInvalid(loginForm, 'correoElectronico')) {
+                <p class="mt-1 text-sm text-red-600">
+                  {{ getErrorMessage(loginForm, 'correoElectronico') }}
+                </p>
+              }
+            </div>
+
+            <!-- Contraseña -->
+            <div>
+              <label for="login-password" class="block text-sm font-semibold text-gray-700 mb-2">
+                Contraseña
+              </label>
+              <div class="relative">
+                <input 
+                  id="login-password"
+                  [type]="showPassword() ? 'text' : 'password'"
+                  formControlName="contrasena"
+                  placeholder="••••••••"
+                  [class.border-red-500]="isFieldInvalid(loginForm, 'contrasena')"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all pr-12">
+                <button 
+                  type="button"
+                  (click)="togglePasswordVisibility()"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                  @if (showPassword()) {
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                  } @else {
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                    </svg>
+                  }
+                </button>
+              </div>
+              @if (isFieldInvalid(loginForm, 'contrasena')) {
+                <p class="mt-1 text-sm text-red-600">
+                  {{ getErrorMessage(loginForm, 'contrasena') }}
+                </p>
+              }
+            </div>
+
+            <!-- Botón Submit -->
+            <button 
+              type="submit"
+              [disabled]="submitting()"
+              class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center">
+              @if (submitting()) {
+                <svg class="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Iniciando sesión...
+              } @else {
+                Iniciar Sesión
+              }
+            </button>
+          </form>
+        }
+
+        <!-- FORMULARIO REGISTRO -->
+        @if (!isLoginMode()) {
+          <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()" class="space-y-5">
+            
+            <h2 class="text-2xl font-bold text-gray-900 text-center mb-4">
+              Crear cuenta nueva
+            </h2>
+
+            <!-- Grid 2 columnas para Nombre y Apellido -->
+            <div class="grid grid-cols-2 gap-4">
+              <!-- Nombre -->
+              <div>
+                <label for="reg-nombre" class="block text-sm font-semibold text-gray-700 mb-1">
+                  Nombre *
+                </label>
+                <input 
+                  id="reg-nombre"
+                  type="text" 
+                  formControlName="nombre"
+                  placeholder="Juan"
+                  [class.border-red-500]="isFieldInvalid(registerForm, 'nombre')"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm">
+                @if (isFieldInvalid(registerForm, 'nombre')) {
+                  <p class="mt-1 text-xs text-red-600">{{ getErrorMessage(registerForm, 'nombre') }}</p>
+                }
+              </div>
+
+              <!-- Apellido -->
+              <div>
+                <label for="reg-apellido" class="block text-sm font-semibold text-gray-700 mb-1">
+                  Apellido *
+                </label>
+                <input 
+                  id="reg-apellido"
+                  type="text" 
+                  formControlName="apellido"
+                  placeholder="Pérez"
+                  [class.border-red-500]="isFieldInvalid(registerForm, 'apellido')"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm">
+                @if (isFieldInvalid(registerForm, 'apellido')) {
+                  <p class="mt-1 text-xs text-red-600">{{ getErrorMessage(registerForm, 'apellido') }}</p>
+                }
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label for="reg-email" class="block text-sm font-semibold text-gray-700 mb-1">
+                Correo Electrónico *
+              </label>
+              <input 
+                id="reg-email"
+                type="email" 
+                formControlName="correoElectronico"
+                placeholder="tu@email.com"
+                [class.border-red-500]="isFieldInvalid(registerForm, 'correoElectronico')"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm">
+              @if (isFieldInvalid(registerForm, 'correoElectronico')) {
+                <p class="mt-1 text-xs text-red-600">{{ getErrorMessage(registerForm, 'correoElectronico') }}</p>
+              }
+            </div>
+
+            <!-- Contraseña -->
+            <div>
+              <label for="reg-password" class="block text-sm font-semibold text-gray-700 mb-1">
+                Contraseña *
+              </label>
+              <div class="relative">
+                <input 
+                  id="reg-password"
+                  [type]="showPassword() ? 'text' : 'password'"
+                  formControlName="hashContrasena"
+                  placeholder="••••••••"
+                  [class.border-red-500]="isFieldInvalid(registerForm, 'hashContrasena')"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm pr-10">
+                <button 
+                  type="button"
+                  (click)="togglePasswordVisibility()"
+                  class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    @if (showPassword()) {
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    } @else {
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                    }
+                  </svg>
+                </button>
+              </div>
+              @if (isFieldInvalid(registerForm, 'hashContrasena')) {
+                <p class="mt-1 text-xs text-red-600">{{ getErrorMessage(registerForm, 'hashContrasena') }}</p>
+              }
+            </div>
+
+            <!-- Confirmar Contraseña -->
+            <div>
+              <label for="reg-confirm-password" class="block text-sm font-semibold text-gray-700 mb-1">
+                Confirmar Contraseña *
+              </label>
+              <div class="relative">
+                <input 
+                  id="reg-confirm-password"
+                  [type]="showConfirmPassword() ? 'text' : 'password'"
+                  formControlName="confirmarContrasena"
+                  placeholder="••••••••"
+                  [class.border-red-500]="isFieldInvalid(registerForm, 'confirmarContrasena')"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm pr-10">
+                <button 
+                  type="button"
+                  (click)="toggleConfirmPasswordVisibility()"
+                  class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    @if (showConfirmPassword()) {
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    } @else {
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                    }
+                  </svg>
+                </button>
+              </div>
+              @if (isFieldInvalid(registerForm, 'confirmarContrasena')) {
+                <p class="mt-1 text-xs text-red-600">{{ getErrorMessage(registerForm, 'confirmarContrasena') }}</p>
+              }
+            </div>
+
+            <!-- Campos opcionales colapsables -->
+            <details class="bg-gray-50 rounded-lg p-4">
+              <summary class="cursor-pointer text-sm font-semibold text-gray-700 hover:text-indigo-600">
+                Información adicional (opcional)
+              </summary>
+              <div class="mt-4 space-y-3">
+                <div>
+                  <label for="reg-telefono" class="block text-xs font-medium text-gray-600 mb-1">Teléfono</label>
+                  <input id="reg-telefono" type="tel" formControlName="numeroTelefono" placeholder="+507 1234-5678" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm">
+                </div>
+                <div>
+                  <label for="reg-direccion" class="block text-xs font-medium text-gray-600 mb-1">Dirección</label>
+                  <input id="reg-direccion" type="text" formControlName="direccion" placeholder="Calle Principal 123" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label for="reg-ciudad" class="block text-xs font-medium text-gray-600 mb-1">Ciudad</label>
+                    <input id="reg-ciudad" type="text" formControlName="ciudad" placeholder="Ciudad de Panamá" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm">
+                  </div>
+                  <div>
+                    <label for="reg-pais" class="block text-xs font-medium text-gray-600 mb-1">País</label>
+                    <input id="reg-pais" type="text" formControlName="pais" placeholder="Panamá" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm">
+                  </div>
+                </div>
+                <div>
+                  <label for="reg-codigo" class="block text-xs font-medium text-gray-600 mb-1">Código Postal</label>
+                  <input id="reg-codigo" type="text" formControlName="codigoPostal" placeholder="00000" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm">
+                </div>
+              </div>
+            </details>
+
+            <!-- Botón Submit -->
+            <button 
+              type="submit"
+              [disabled]="submitting()"
+              class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mt-6">
+              @if (submitting()) {
+                <svg class="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Creando cuenta...
+              } @else {
+                Crear Cuenta
+              }
+            </button>
+          </form>
+        }
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <p class="text-center text-sm text-gray-600 mt-6">
+      ¿Necesitas ayuda? 
+      <a href="mailto:soporte@techstore.com" class="text-indigo-600 hover:text-indigo-700 font-semibold">
+        Contáctanos
+      </a>
+    </p>
+  </div>
+</div>

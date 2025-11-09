@@ -1,0 +1,26 @@
+/* Animaciones personalizadas */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Estilos para inputs con error */
+input.border-red-500:focus {
+  --tw-ring-color: rgb(239 68 68);
+  border-color: rgb(239 68 68);
+}
+
+/* Dropdown animation */
+details[open] summary ~ * {
+  animation: fadeIn 0.3s ease-in-out;
+}

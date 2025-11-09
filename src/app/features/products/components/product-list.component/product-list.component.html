@@ -11,7 +11,6 @@
     @for (product of products; track product.id) {
       <app-product-card 
         [product]="product"
-        (addToCart)="onAddToCart($event)"
       />
     }
   </div>

@@ -13,12 +13,4 @@ import { ProductModel } from '../../models/product.model';
 export class ProductListComponent {
   @Input({ required: true }) products: ProductModel[] = [];
   @Input() loading: boolean = false;
-
-  /**
-   * Manejar evento de agregar al carrito
-   */
-  onAddToCart(product: ProductModel): void {
-    console.log('🛒 Agregar al carrito:', product);
-    // TODO: Implementar lógica del carrito
-  }
 }

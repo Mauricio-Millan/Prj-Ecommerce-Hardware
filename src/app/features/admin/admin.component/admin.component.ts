@@ -1,6 +1,7 @@
-import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, signal, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet, Router } from '@angular/router';
+import { LoginService } from '../../auth/services/login.service';
 
 interface MenuItem {
   icon: string;
@@ -16,6 +17,9 @@ interface MenuItem {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AdminComponent {
+  private loginService = inject(LoginService);
+  private router = inject(Router);
+
   sidebarOpen = signal(true);
 
   menuItems: MenuItem[] = [
@@ -23,6 +27,7 @@ export class AdminComponent {
     { icon: '📦', label: 'Productos', route: '/admin/productos' },
     { icon: '🏷️', label: 'Categorías', route: '/admin/categorias' },
     { icon: '🏢', label: 'Marcas', route: '/admin/marcas' },
+    { icon: '👥', label: 'Usuarios', route: '/admin/usuarios' },
   ];
 
   toggleSidebar(): void {
@@ -30,7 +35,9 @@ export class AdminComponent {
   }
 
   logout(): void {
-    console.log('Cerrando sesión...');
-    // TODO: Implementar lógica de logout
+    if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+      this.loginService.logout();
+      this.router.navigate(['/']);
+    }
   }
 }
