@@ -14,6 +14,7 @@ import { UserAdminComponent } from './features/admin/components/user/user-admin.
 import { UserEditComponent } from './features/admin/components/user/user-edit.component/user-edit.component';
 import { ProductDetailsComponent } from './features/products/components/product-details.component/product-details.component';
 import { CarritoComponent } from './features/catalog/components/carrito.component/carrito.component';
+import { PagoComponent } from './features/catalog/components/pago.component/pago.component';
 import { adminGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -32,6 +33,10 @@ export const routes: Routes = [
   {
     path: 'carrito',
     component: CarritoComponent
+  },
+  {
+    path: 'pago',
+    component: PagoComponent
   },
   {
     path: 'login',

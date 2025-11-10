@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CarritoService } from '../../../products/services/carrito.service';
+import { CarritoStateService } from '../../../products/services/carrito-state.service';
 import { ProductService } from '../../../products/services/product.service';
 import { LoginService } from '../../../auth/services/login.service';
 import { ItemCarritoModel, CarritoModel } from '../../../products/models/carrito.model';
@@ -17,6 +18,7 @@ import { firstValueFrom } from 'rxjs';
 })
 export class CarritoComponent implements OnInit {
   private carritoService = inject(CarritoService);
+  private carritoStateService = inject(CarritoStateService);
   private productService = inject(ProductService);
   private loginService = inject(LoginService);
   private router = inject(Router);
@@ -237,11 +239,17 @@ export class CarritoComponent implements OnInit {
    * Ir al checkout
    */
   proceedToCheckout(): void {
-    if (this.items().length === 0) {
-      alert('El carrito está vacío');
+    const selectedItems = this.items().filter(item => item.selected);
+    
+    if (selectedItems.length === 0) {
+      alert('Por favor selecciona al menos un producto para continuar');
       return;
     }
-    // TODO: Implementar checkout
-    alert('Funcionalidad de checkout próximamente');
+    
+    // Guardar items seleccionados en el servicio compartido
+    this.carritoStateService.setSelectedItems(selectedItems);
+    
+    // Navegar a la página de pago
+    this.router.navigate(['/pago']);
   }
 }

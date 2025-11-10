@@ -1,0 +1,408 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="container mx-auto px-4">
+    <!-- Header -->
+    <div class="mb-8">
+      <button 
+        (click)="goBack()"
+        class="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4"
+      >
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+        </svg>
+        Volver al carrito
+      </button>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Checkout</h1>
+      <p class="text-gray-600">Completa tu compra de forma segura</p>
+    </div>
+
+    <!-- Loading State -->
+    @if (loading()) {
+      <div class="flex justify-center items-center h-96">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+      </div>
+    }
+
+    <!-- Main Content -->
+    @if (!loading()) {
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Column - Forms -->
+        <div class="lg:col-span-2 space-y-6">
+          
+          <!-- Shipping Information -->
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/>
+              </svg>
+              Información de Envío
+            </h2>
+            
+            <form [formGroup]="shippingForm" class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Full Name -->
+                <div class="md:col-span-2">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Nombre Completo *
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="fullName"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Juan Pérez García"
+                  />
+                  @if (shippingForm.get('fullName')?.invalid && shippingForm.get('fullName')?.touched) {
+                    <p class="text-red-600 text-sm mt-1">El nombre es requerido (mínimo 3 caracteres)</p>
+                  }
+                </div>
+
+                <!-- Email -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Correo Electrónico *
+                  </label>
+                  <input
+                    type="email"
+                    formControlName="email"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="correo@ejemplo.com"
+                  />
+                  @if (shippingForm.get('email')?.invalid && shippingForm.get('email')?.touched) {
+                    <p class="text-red-600 text-sm mt-1">Ingresa un correo válido</p>
+                  }
+                </div>
+
+                <!-- Phone -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Teléfono *
+                  </label>
+                  <input
+                    type="tel"
+                    formControlName="phone"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="987654321"
+                  />
+                  @if (shippingForm.get('phone')?.invalid && shippingForm.get('phone')?.touched) {
+                    <p class="text-red-600 text-sm mt-1">Teléfono inválido (9-15 dígitos)</p>
+                  }
+                </div>
+
+                <!-- Address -->
+                <div class="md:col-span-2">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Dirección *
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="address"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Av. Principal 123, Dpto 456"
+                  />
+                  @if (shippingForm.get('address')?.invalid && shippingForm.get('address')?.touched) {
+                    <p class="text-red-600 text-sm mt-1">La dirección es requerida (mínimo 10 caracteres)</p>
+                  }
+                </div>
+
+                <!-- City -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Ciudad *
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="city"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Lima"
+                  />
+                  @if (shippingForm.get('city')?.invalid && shippingForm.get('city')?.touched) {
+                    <p class="text-red-600 text-sm mt-1">La ciudad es requerida</p>
+                  }
+                </div>
+
+                <!-- State -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Departamento *
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="state"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Lima"
+                  />
+                  @if (shippingForm.get('state')?.invalid && shippingForm.get('state')?.touched) {
+                    <p class="text-red-600 text-sm mt-1">El departamento es requerido</p>
+                  }
+                </div>
+
+                <!-- Zip Code -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Código Postal *
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="zipCode"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="15001"
+                  />
+                  @if (shippingForm.get('zipCode')?.invalid && shippingForm.get('zipCode')?.touched) {
+                    <p class="text-red-600 text-sm mt-1">Código postal inválido (5 dígitos)</p>
+                  }
+                </div>
+
+                <!-- Country -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    País *
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="country"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Perú"
+                  />
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Payment Method -->
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
+                <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
+              </svg>
+              Método de Pago
+            </h2>
+
+            <!-- Payment Method Selector -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <!-- Credit/Debit Card -->
+              <button
+                type="button"
+                (click)="selectPaymentMethod('card')"
+                [class.border-blue-600]="selectedPaymentMethod() === 'card'"
+                [class.bg-blue-50]="selectedPaymentMethod() === 'card'"
+                class="p-4 border-2 rounded-lg hover:border-blue-400 transition-all"
+              >
+                <div class="flex flex-col items-center gap-2">
+                  <svg class="w-8 h-8" [class.text-blue-600]="selectedPaymentMethod() === 'card'" [class.text-gray-400]="selectedPaymentMethod() !== 'card'" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
+                    <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
+                  </svg>
+                  <span class="font-semibold text-sm">Tarjeta</span>
+                  <span class="text-xs text-gray-500">Crédito/Débito</span>
+                </div>
+              </button>
+
+              <!-- PayPal -->
+              <button
+                type="button"
+                (click)="selectPaymentMethod('paypal')"
+                [class.border-blue-600]="selectedPaymentMethod() === 'paypal'"
+                [class.bg-blue-50]="selectedPaymentMethod() === 'paypal'"
+                class="p-4 border-2 rounded-lg hover:border-blue-400 transition-all"
+              >
+                <div class="flex flex-col items-center gap-2">
+                  <svg class="w-8 h-8" [class.text-blue-600]="selectedPaymentMethod() === 'paypal'" [class.text-gray-400]="selectedPaymentMethod() !== 'paypal'" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.818-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/>
+                  </svg>
+                  <span class="font-semibold text-sm">PayPal</span>
+                  <span class="text-xs text-gray-500">Pago rápido</span>
+                </div>
+              </button>
+            </div>
+
+            <!-- Card Payment Form -->
+            @if (selectedPaymentMethod() === 'card') {
+              <form [formGroup]="cardForm" class="space-y-4">
+                <!-- Card Number -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Número de Tarjeta *
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="cardNumber"
+                    (input)="formatCardNumber($event)"
+                    maxlength="19"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="1234 5678 9012 3456"
+                  />
+                  @if (cardForm.get('cardNumber')?.invalid && cardForm.get('cardNumber')?.touched) {
+                    <p class="text-red-600 text-sm mt-1">Número de tarjeta inválido (16 dígitos)</p>
+                  }
+                </div>
+
+                <!-- Card Name -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Nombre en la Tarjeta *
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="cardName"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase"
+                    placeholder="JUAN PEREZ"
+                  />
+                  @if (cardForm.get('cardName')?.invalid && cardForm.get('cardName')?.touched) {
+                    <p class="text-red-600 text-sm mt-1">El nombre es requerido</p>
+                  }
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <!-- Expiry Date -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de Expiración *
+                    </label>
+                    <input
+                      type="text"
+                      formControlName="expiryDate"
+                      (input)="formatExpiryDate($event)"
+                      maxlength="5"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="MM/YY"
+                    />
+                    @if (cardForm.get('expiryDate')?.invalid && cardForm.get('expiryDate')?.touched) {
+                      <p class="text-red-600 text-sm mt-1">Formato: MM/YY</p>
+                    }
+                  </div>
+
+                  <!-- CVV -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                      CVV *
+                    </label>
+                    <input
+                      type="text"
+                      formControlName="cvv"
+                      maxlength="4"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="123"
+                    />
+                    @if (cardForm.get('cvv')?.invalid && cardForm.get('cvv')?.touched) {
+                      <p class="text-red-600 text-sm mt-1">CVV inválido (3-4 dígitos)</p>
+                    }
+                  </div>
+                </div>
+
+                <!-- Card Icons -->
+                <div class="flex gap-2 mt-4">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa" class="h-8" />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-8" />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg" alt="American Express" class="h-8" />
+                </div>
+              </form>
+            }
+
+            <!-- PayPal Message -->
+            @if (selectedPaymentMethod() === 'paypal') {
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div class="flex items-start gap-3">
+                  <svg class="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                  </svg>
+                  <div>
+                    <h4 class="font-semibold text-blue-900 mb-1">Pago con PayPal</h4>
+                    <p class="text-sm text-blue-800">
+                      Serás redirigido a PayPal para completar tu pago de forma segura.
+                      No es necesario tener una cuenta PayPal, también puedes pagar con tarjeta.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Right Column - Order Summary -->
+        <div class="lg:col-span-1">
+          <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Resumen del Pedido</h2>
+
+            <!-- Items -->
+            <div class="space-y-3 mb-6 max-h-96 overflow-y-auto">
+              @for (item of items(); track item.id) {
+                <div class="flex gap-3 pb-3 border-b border-gray-200">
+                  <img
+                    [src]="getProductImage(item.imagenPortada)"
+                    [alt]="item.nombreProducto"
+                    class="w-16 h-16 object-cover rounded"
+                  />
+                  <div class="flex-1">
+                    <h4 class="text-sm font-medium text-gray-900 line-clamp-2">{{ item.nombreProducto }}</h4>
+                    <p class="text-sm text-gray-600">Cantidad: {{ item.cantidad }}</p>
+                    <p class="text-sm font-semibold text-blue-600">{{ formatPrice(item.subtotal) }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Pricing -->
+            <div class="space-y-3 mb-6 border-t border-gray-200 pt-4">
+              <div class="flex justify-between text-gray-600">
+                <span>Subtotal</span>
+                <span>{{ formatPrice(subtotal) }}</span>
+              </div>
+              <div class="flex justify-between text-gray-600">
+                <span>Envío</span>
+                <span class="text-green-600 font-medium">Gratis</span>
+              </div>
+              <div class="flex justify-between text-gray-600">
+                <span>IGV (18%)</span>
+                <span>{{ formatPrice(tax) }}</span>
+              </div>
+              <div class="border-t border-gray-200 pt-3">
+                <div class="flex justify-between text-xl font-bold text-gray-900">
+                  <span>Total</span>
+                  <span class="text-blue-600">{{ formatPrice(total) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pay Button -->
+            <button
+              (click)="confirmPayment()"
+              [disabled]="processing()"
+              class="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              @if (processing()) {
+                <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Procesando pago...
+              } @else {
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                </svg>
+                Confirmar y Pagar {{ formatPrice(total) }}
+              }
+            </button>
+
+            <!-- Processing Info -->
+            @if (processing()) {
+              <div class="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p class="text-sm text-blue-800 text-center">
+                  <span class="font-semibold">⏳ Procesando tu pedido...</span><br/>
+                  Por favor espera, no cierres esta ventana.
+                </p>
+              </div>
+            }
+
+            <!-- Security Note -->
+            <div class="mt-4 flex items-start gap-2 text-xs text-gray-500">
+              <svg class="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              <span>Tus datos están protegidos. El pedido se registrará en nuestro sistema de forma segura.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
