@@ -1,9 +1,12 @@
 package org.example.restecommercehardware.Service.Impl;
 
 import lombok.RequiredArgsConstructor;
+import org.example.restecommercehardware.DTOs.LoginRequestDTO;
+import org.example.restecommercehardware.DTOs.LoginResponseDTO;
 import org.example.restecommercehardware.Mapper.Usuario_Entity;
 import org.example.restecommercehardware.Repository.Usuario_Repository;
 import org.example.restecommercehardware.Service.Usuario_Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +19,7 @@ import java.util.Optional;
 public class Usuario_Service_Impl implements Usuario_Service {
 
     private final Usuario_Repository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
@@ -39,6 +43,9 @@ public class Usuario_Service_Impl implements Usuario_Service {
     @Transactional
     public Usuario_Entity createUsuario(Usuario_Entity usuario) {
         validarCorreoUnico(usuario.getCorreoElectronico());
+        // Encriptar la contraseña
+        String contrasenaEncriptada = passwordEncoder.encode(usuario.getHashContrasena());
+        usuario.setHashContrasena(contrasenaEncriptada);
         usuario.setCreadoEn(Instant.now());
         usuario.setActualizadoEn(Instant.now());
         return usuarioRepository.save(usuario);
@@ -78,6 +85,28 @@ public class Usuario_Service_Impl implements Usuario_Service {
         return usuarioRepository.existsByCorreoElectronico(correoElectronico);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public LoginResponseDTO login(LoginRequestDTO loginRequest) {
+        Optional<Usuario_Entity> usuarioOpt = usuarioRepository.findByCorreoElectronico(loginRequest.getCorreoElectronico());
+
+        if (usuarioOpt.isEmpty()) {
+            return new LoginResponseDTO(false, "Usuario no encontrado", null);
+        }
+
+        Usuario_Entity usuario = usuarioOpt.get();
+
+        // Verificar la contraseña
+        if (!passwordEncoder.matches(loginRequest.getContrasena(), usuario.getHashContrasena())) {
+            return new LoginResponseDTO(false, "Contraseña incorrecta", null);
+        }
+
+        // Login exitoso - limpiar la contraseña antes de retornar
+        usuario.setHashContrasena(null);
+        return new LoginResponseDTO(true, "Login exitoso", usuario);
+    }
+
+
     // Métodos privados de utilidad
     private void validarCorreoUnico(String correoElectronico) {
         if (usuarioRepository.existsByCorreoElectronico(correoElectronico)) {
@@ -112,6 +141,9 @@ public class Usuario_Service_Impl implements Usuario_Service {
         }
         if (origen.getCodigoPostal() != null) {
             destino.setCodigoPostal(origen.getCodigoPostal());
+        }
+        if (origen.getRol() != null) {
+            destino.setRol(origen.getRol());
         }
     }
 }

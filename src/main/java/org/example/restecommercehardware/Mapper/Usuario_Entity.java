@@ -68,4 +68,11 @@ public class Usuario_Entity {
     @Column(name = "actualizado_en")
     private Instant actualizadoEn;
 
+
+    @Size(max = 50)
+    @NotNull
+    @ColumnDefault("'cliente'")
+    @Column(name = "rol", nullable = false, length = 50)
+    private String rol;
+
 }

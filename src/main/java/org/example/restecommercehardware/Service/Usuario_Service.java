@@ -1,5 +1,7 @@
 package org.example.restecommercehardware.Service;
 
+import org.example.restecommercehardware.DTOs.LoginRequestDTO;
+import org.example.restecommercehardware.DTOs.LoginResponseDTO;
 import org.example.restecommercehardware.Mapper.Usuario_Entity;
 
 import java.util.List;
@@ -13,4 +15,5 @@ public interface Usuario_Service {
     Usuario_Entity updateUsuario(Long id, Usuario_Entity usuario);
     void deleteUsuario(Long id);
     boolean existsByEmail(String correoElectronico);
+    LoginResponseDTO login(LoginRequestDTO loginRequest);
 }

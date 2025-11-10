@@ -1,6 +1,7 @@
 package org.example.restecommercehardware.Controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.restecommercehardware.DTOs.ItemCarritoConImagenDTO;
 import org.example.restecommercehardware.Mapper.ItemsCarrito_Entity;
 import org.example.restecommercehardware.Service.ItemsCarrito_Service;
 import org.springframework.http.HttpStatus;
@@ -30,8 +31,8 @@ public class ItemsCarrito_Controller {
     }
 
     @GetMapping("/carrito/{idCarrito}")
-    public ResponseEntity<List<ItemsCarrito_Entity>> getItemsByCarrito(@PathVariable Long idCarrito) {
-        List<ItemsCarrito_Entity> items = itemsCarritoService.getItemsByCarrito(idCarrito);
+    public ResponseEntity<List<ItemCarritoConImagenDTO>> getItemsByCarrito(@PathVariable Long idCarrito) {
+        List<ItemCarritoConImagenDTO> items = itemsCarritoService.getItemsByCarritoConImagen(idCarrito);
         return ResponseEntity.ok(items);
     }
 

@@ -1,6 +1,8 @@
 package org.example.restecommercehardware.Controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.restecommercehardware.DTOs.LoginRequestDTO;
+import org.example.restecommercehardware.DTOs.LoginResponseDTO;
 import org.example.restecommercehardware.Mapper.Usuario_Entity;
 import org.example.restecommercehardware.Service.Usuario_Service;
 import org.springframework.http.HttpStatus;
@@ -36,7 +38,7 @@ public class Usuario_Controller {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<Usuario_Entity> createUsuario(@RequestBody Usuario_Entity usuario) {
         try {
             Usuario_Entity nuevoUsuario = usuarioService.createUsuario(usuario);
@@ -72,5 +74,15 @@ public class Usuario_Controller {
     public ResponseEntity<Boolean> existsByEmail(@PathVariable String correo) {
         boolean exists = usuarioService.existsByEmail(correo);
         return ResponseEntity.ok(exists);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequest) {
+        LoginResponseDTO response = usuarioService.login(loginRequest);
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
     }
 }
