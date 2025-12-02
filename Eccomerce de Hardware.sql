@@ -21,7 +21,8 @@ CREATE TABLE [usuarios] (
   [pais] varchar(100),
   [codigo_postal] varchar(10),
   [creado_en] datetime2 DEFAULT (GETDATE()),
-  [actualizado_en] datetime2 DEFAULT (GETDATE())
+  [actualizado_en] datetime2 DEFAULT (GETDATE()),
+  [rol] varchar(50) NOT NULL DEFAULT 'cliente'
 )
 GO
 
@@ -175,3 +176,59 @@ exec ObtenerProductoConImagenPortada
 select * from productos
 select * from marcas
 select * from categorias
+
+-- sql
+CREATE OR ALTER TRIGGER trg_ItemsPedido_AfterInsert
+ON items_pedido
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    ----------------------------------------------------
+    -- 1) Calcular cantidades requeridas por producto
+    ----------------------------------------------------
+    DECLARE @Required TABLE (
+        id_producto INT PRIMARY KEY,
+        total_cant INT
+    );
+
+    INSERT INTO @Required (id_producto, total_cant)
+    SELECT id_producto, SUM(cantidad)
+    FROM inserted
+    GROUP BY id_producto;
+
+    ----------------------------------------------------
+    -- 2) Verificar stock suficiente para los productos
+    ----------------------------------------------------
+    IF EXISTS (
+        SELECT 1
+        FROM @Required r
+        LEFT JOIN productos p WITH (UPDLOCK, HOLDLOCK)
+            ON p.id = r.id_producto
+        WHERE p.id IS NULL              -- producto no existe
+           OR p.stock < r.total_cant    -- stock insuficiente
+    )
+    BEGIN
+        -- Revierte toda la transacción (pedido + items, si todo venía junto)
+        ROLLBACK TRANSACTION;
+
+        RAISERROR(
+            'Stock insuficiente para uno o más productos; operación cancelada.',
+            16,
+            1
+        );
+        RETURN;
+    END
+
+    ---------------------------------------
+    -- 3) Descontar el stock por producto
+    ---------------------------------------
+    UPDATE p
+    SET p.stock = p.stock - r.total_cant
+    FROM productos p
+    INNER JOIN @Required r
+        ON p.id = r.id_producto;
+END
+GO
+
