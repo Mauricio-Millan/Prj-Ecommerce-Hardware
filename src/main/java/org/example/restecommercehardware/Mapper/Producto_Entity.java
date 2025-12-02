@@ -25,7 +25,6 @@ public class Producto_Entity {
 
     @Size(max = 255)
     @NotNull
-    @Nationalized
     @Column(name = "nombre", nullable = false)
     private String nombre;
 
