@@ -1,17 +1,21 @@
-<div class="space-y-6">
+<div class="space-y-8">
   <!-- Header -->
-  <div class="flex items-center justify-between">
+  <section class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
     <div>
-      <h2 class="text-3xl font-bold text-gray-900">Dashboard</h2>
-      <p class="text-gray-600 mt-1">Resumen general del sistema</p>
+      <p class="text-xs uppercase tracking-[0.35em] text-gray-400">Panel General</p>
+      <h2 class="text-3xl font-semibold text-gray-900 mt-1">Dashboard</h2>
+      <p class="text-sm text-gray-500 mt-1">Visión rápida del inventario y accesos frecuentes.</p>
     </div>
-    <button 
-      (click)="loadDashboardData()"
-      [disabled]="loading()"
-      class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50">
-      🔄 Actualizar
-    </button>
-  </div>
+    <div class="flex items-center gap-2">
+      <button 
+        (click)="loadDashboardData()"
+        [disabled]="loading()"
+        class="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 disabled:opacity-40">
+        <span class="text-lg">⟳</span>
+        Actualizar datos
+      </button>
+    </div>
+  </section>
 
   <!-- Loading -->
   @if (loading()) {
@@ -22,113 +26,104 @@
 
   <!-- Stats Grid -->
   @if (!loading()) {
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5">
       @for (stat of stats(); track stat.label) {
-        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:-translate-y-1">
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-4">
-              <div [class]="'w-14 h-14 rounded-lg flex items-center justify-center text-3xl ' + stat.bgColor">
+        <article class="rounded-2xl border border-gray-100 bg-white/80 p-5 shadow-sm">
+          <div class="flex items-start justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <div [class]="'h-10 w-10 rounded-full flex items-center justify-center text-base text-white ' + stat.bgColor">
                 {{ stat.icon }}
               </div>
-              @if (stat.change) {
-                <span 
-                  [class]="stat.change.startsWith('+') ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100'"
-                  class="text-sm font-semibold px-3 py-1 rounded-full">
-                  {{ stat.change }}
-                </span>
-              }
+              <div>
+                <p class="text-xs uppercase tracking-wide text-gray-400">{{ stat.label }}</p>
+                <h3 class="text-2xl font-semibold text-gray-900 mt-1">
+                  @if (stat.label === 'Valor Inventario') {
+                    {{ stat.value | currency:'PEN':'symbol':'1.0-0' }}
+                  } @else {
+                    {{ stat.value | number }}
+                  }
+                </h3>
+              </div>
             </div>
-            <h3 class="text-3xl font-bold text-gray-900 mb-1">
-              @if (stat.label === 'Valor Inventario') {
-                {{ stat.value | currency:'PEN':'symbol':'1.0-0' }}
-              } @else {
-                {{ stat.value | number }}
-              }
-            </h3>
-            <p class="text-gray-600 text-sm font-medium">{{ stat.label }}</p>
+            @if (stat.change) {
+              <span
+                class="rounded-full px-2.5 py-1 text-xs font-medium"
+                [class]="stat.change.startsWith('+') ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'">
+                {{ stat.change }}
+              </span>
+            }
           </div>
-          <div [class]="stat.bgColor + ' h-1 w-full'"></div>
-        </div>
+          <div class="h-1 rounded-full bg-gray-100">
+            <div [class]="stat.bgColor + ' h-full rounded-full'" style="width: 100%"></div>
+          </div>
+        </article>
       }
-    </div>
+    </section>
 
-    <!-- Gráficos y Tablas -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-      <!-- Accesos rápidos -->
-      <div class="bg-white rounded-xl shadow-lg p-6">
-        <h3 class="text-xl font-bold text-gray-900 mb-4">Accesos Rápidos</h3>
+    <!-- Secondary panels -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Quick actions -->
+      <article class="rounded-2xl border border-gray-100 bg-white/90 p-6">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <p class="text-xs uppercase tracking-wide text-gray-400">Atajos</p>
+            <h3 class="text-xl font-semibold text-gray-900">Accesos rápidos</h3>
+          </div>
+          <span class="text-xs text-gray-400">3 acciones
+          </span>
+        </div>
         <div class="space-y-3">
           <a 
             routerLink="/admin/productos/nuevo"
-            class="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg hover:from-blue-100 hover:to-blue-200 transition-all group">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white">
-                ➕
-              </div>
-              <span class="font-semibold text-gray-900">Nuevo Producto</span>
-            </div>
-            <svg class="w-5 h-5 text-blue-600 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
+            class="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-700 transition hover:border-gray-400">
+            <span class="text-lg">＋</span>
+            <span>Nuevo producto</span>
+            <span class="ml-auto text-xs text-gray-400">Crear ficha</span>
           </a>
-
           <a 
             routerLink="/admin/categorias/nueva"
-            class="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-lg hover:from-green-100 hover:to-green-200 transition-all group">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center text-white">
-                ➕
-              </div>
-              <span class="font-semibold text-gray-900">Nueva Categoría</span>
-            </div>
-            <svg class="w-5 h-5 text-green-600 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
+            class="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-700 transition hover:border-gray-400">
+            <span class="text-lg">＋</span>
+            <span>Nueva categoría</span>
+            <span class="ml-auto text-xs text-gray-400">Organizar catálogo</span>
           </a>
-
           <a 
             routerLink="/admin/marcas/nueva"
-            class="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg hover:from-purple-100 hover:to-purple-200 transition-all group">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center text-white">
-                ➕
-              </div>
-              <span class="font-semibold text-gray-900">Nueva Marca</span>
-            </div>
-            <svg class="w-5 h-5 text-purple-600 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
+            class="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-700 transition hover:border-gray-400">
+            <span class="text-lg">＋</span>
+            <span>Nueva marca</span>
+            <span class="ml-auto text-xs text-gray-400">Gama oficial</span>
           </a>
         </div>
-      </div>
+      </article>
 
-      <!-- Actividad reciente -->
-      <div class="bg-white rounded-xl shadow-lg p-6">
-        <h3 class="text-xl font-bold text-gray-900 mb-4">Actividad Reciente</h3>
-        <div class="space-y-4">
-          <div class="flex items-start gap-3 pb-3 border-b border-gray-100">
-            <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-            <div>
-              <p class="text-sm font-medium text-gray-900">Sistema iniciado correctamente</p>
-              <p class="text-xs text-gray-500">Hace unos momentos</p>
-            </div>
+      <!-- Activity timeline -->
+      <article class="rounded-2xl border border-gray-100 bg-white/90 p-6">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <p class="text-xs uppercase tracking-wide text-gray-400">Actividad</p>
+            <h3 class="text-xl font-semibold text-gray-900">Registro reciente</h3>
           </div>
-          <div class="flex items-start gap-3 pb-3 border-b border-gray-100">
-            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-            <div>
-              <p class="text-sm font-medium text-gray-900">Dashboard cargado</p>
-              <p class="text-xs text-gray-500">Ahora</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-3">
-            <div class="w-2 h-2 bg-indigo-500 rounded-full mt-2"></div>
-            <div>
-              <p class="text-sm font-medium text-gray-900">Panel administrativo activo</p>
-              <p class="text-xs text-gray-500">En línea</p>
-            </div>
-          </div>
+          <span class="text-xs text-gray-400">Sesión actual</span>
         </div>
-      </div>
-    </div>
+        <ol class="relative border-l border-gray-100 pl-6 space-y-6">
+          <li>
+            <span class="absolute -left-[7px] mt-1 h-3 w-3 rounded-full bg-emerald-400"></span>
+            <p class="text-sm font-medium text-gray-900">Sistema iniciado correctamente</p>
+            <p class="text-xs text-gray-500">Hace unos momentos</p>
+          </li>
+          <li>
+            <span class="absolute -left-[7px] mt-1 h-3 w-3 rounded-full bg-blue-400"></span>
+            <p class="text-sm font-medium text-gray-900">Dashboard sincronizado</p>
+            <p class="text-xs text-gray-500">Ahora</p>
+          </li>
+          <li>
+            <span class="absolute -left-[7px] mt-1 h-3 w-3 rounded-full bg-indigo-400"></span>
+            <p class="text-sm font-medium text-gray-900">Panel administrativo activo</p>
+            <p class="text-xs text-gray-500">En línea</p>
+          </li>
+        </ol>
+      </article>
+    </section>
   }
 </div>

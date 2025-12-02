@@ -37,6 +37,22 @@ export class PedidoService {
   }
 
   /**
+   * Obtener todos los pedidos (Admin)
+   * GET /api/pedidos
+   */
+  getAllPedidos(): Observable<PedidoModel[]> {
+    return this.http.get<PedidoModel[]>(this.apiUrl);
+  }
+
+  /**
+   * Actualizar un pedido
+   * PUT /api/pedidos/{id}
+   */
+  updatePedido(id: number, pedido: Partial<PedidoModel>): Observable<PedidoModel> {
+    return this.http.put<PedidoModel>(`${this.apiUrl}/${id}`, pedido);
+  }
+
+  /**
    * Crear un item de pedido
    * POST /api/items-pedido
    */

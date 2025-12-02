@@ -1,4 +1,4 @@
-// Modelo de Producto - Coincide con la respuesta de Spring Boot
+// Modelo de Producto BD
 export interface ProductModel {
   id: number;
   nombre: string;

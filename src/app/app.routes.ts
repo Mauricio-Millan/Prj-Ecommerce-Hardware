@@ -16,6 +16,10 @@ import { ProductDetailsComponent } from './features/products/components/product-
 import { CarritoComponent } from './features/catalog/components/carrito.component/carrito.component';
 import { PagoComponent } from './features/catalog/components/pago.component/pago.component';
 import { adminGuard } from './core/guards/auth.guard';
+import { NosotrosComponent } from './home/nosotros.component/nosotros.component';
+import { LocalesComponent } from './home/locales.component/locales.component';
+import { PedidosComponent } from './features/cart/components/pedidos.component/pedidos.component';
+import { Pedidos } from './features/admin/components/pedidos/pedidos';
 
 export const routes: Routes = [
   {
@@ -23,8 +27,20 @@ export const routes: Routes = [
     component: HomeComponent
   },
   {
+    path: 'nosotros',
+    component: NosotrosComponent
+  },
+  {
+    path: 'locales',
+    component: LocalesComponent
+  },
+  {
     path: 'catalogo',
     component: CatalogComponent
+  },
+  {
+    path: 'mis-pedidos',
+    component: PedidosComponent
   },
   {
     path: 'producto/:id',
@@ -103,6 +119,10 @@ export const routes: Routes = [
       {
         path: 'usuarios/editar/:id',
         component: UserEditComponent
+      },
+      {
+        path: 'pedidos',
+        component: Pedidos
       }
     ]
   },

@@ -1,0 +1,4 @@
+-- endpoint para obtener los pedidos de un usuario
+  'http://localhost:8080/REST-Ecommerce-Hardware/api/pedidos/usuario/1' \
+-- endpoint para obtener los detalles de un pedido en especifico
+  'http://localhost:8080/REST-Ecommerce-Hardware/api/items-pedido/pedido/3' \

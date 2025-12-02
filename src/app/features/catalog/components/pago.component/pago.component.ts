@@ -76,11 +76,13 @@ export class PagoComponent implements OnInit {
   }
 
   get tax(): number {
-    return this.subtotal * 0.18; // IGV 18% en Perú
+    // El IGV ya está incluido en el precio, calcularlo: precio / 1.18 * 0.18
+    return this.subtotal - (this.subtotal / 1.18);
   }
 
   get total(): number {
-    return this.subtotal + this.shipping + this.tax;
+    // El total es el subtotal (que ya incluye IGV) + envío
+    return this.subtotal + this.shipping;
   }
 
   ngOnInit(): void {

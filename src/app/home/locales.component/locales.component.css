@@ -1,0 +1,296 @@
+/* ==========================================================
+   ESTILOS GENERALES
+========================================================== */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f0f0f0;
+}
+
+h2, h3, h4 {
+    margin: 0 0 12px;
+}
+
+p {
+    margin: 0 0 12px;
+}
+
+/* ==========================================================
+   MENÚ
+========================================================== */
+header {
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 15px 0;
+}
+
+.menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+}
+
+.menu a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    padding: 8px 18px;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.menu a:hover,
+.menu a.active {
+    background: #dfe5ff;
+    color: #2a42ff;
+}
+
+/* ==========================================================
+   BANNER SUPERIOR
+========================================================== */
+.banner img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0 0 12px 12px;
+}
+
+/* ==========================================================
+   CONTENEDOR GENERAL
+========================================================== */
+.contenedor {
+    width: 90%;
+    max-width: 1200px;
+    margin: 35px auto;
+}
+
+/* ==========================================================
+   TARJETAS GENERALES (UNIFICADAS Y MEJORADAS)
+========================================================== */
+.card {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+    margin-bottom: 30px;
+    transition: all 0.28s ease;
+}
+
+/* Hover agregado */
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.22);
+}
+
+/* tarjetas grandes tipo "sección" */
+.card.grande {
+    padding: 35px;
+    border-radius: 18px;
+}
+
+/* ==========================================================
+   SECCIÓN MISIÓN Y VISIÓN (ESTILO PASTEL)
+========================================================== */
+.fila-mv {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.mv {
+    flex: 1;
+    min-width: 260px;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    transition: all 0.28s ease;
+}
+
+/* Hover agregado */
+.mv:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.22);
+}
+
+/* color misión */
+.fila-mv .mv:nth-child(1) {
+    background: #d8e5ff;
+}
+
+/* color visión */
+.fila-mv .mv:nth-child(2) {
+    background: #ffe3cc;
+}
+
+/* ==========================================================
+   OBJETIVOS (AMARILLO, ESTILO CAJA GRANDE)
+========================================================== */
+.objetivos {
+    background: #ffef7f;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.28s ease;
+}
+
+/* Hover agregado */
+.objetivos:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.22);
+}
+
+.objetivos ul {
+    padding-left: 22px;
+}
+
+.objetivos ul li {
+    margin-bottom: 8px;
+}
+
+/* ==========================================================
+   VIDEO CENTRADO
+========================================================== */
+.video {
+    text-align: center;
+    margin: 45px 0;
+}
+
+.video iframe {
+    width: 80%;
+    height: 350px;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+/* ==========================================================
+   LOCALES – TARJETAS TIPO GRID
+========================================================== */
+.locales-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    gap: 30px;
+    padding: 10px 0 40px;
+}
+
+.local-card {
+    background: white;
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+    transition: all 0.28s ease;
+}
+
+/* Hover agregado */
+.local-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 26px rgba(0,0,0,0.25);
+}
+
+.local-card img {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+    border-radius: 14px;
+    margin-bottom: 15px;
+}
+
+/* ==========================================================
+   MAPAS
+========================================================== */
+.map-card {
+    width: 100%;
+    height: 260px;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-top: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.25);
+    transition: all 0.28s ease;
+}
+
+/* Hover agregado */
+.map-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 26px rgba(0,0,0,0.35);
+}
+
+.map-card iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.btn-map {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 30px;
+    background: #356df0;
+    color: white;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+/* Hover ya agregado en original, lo dejo */
+.btn-map:hover {
+    background: #1e4ec7;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+footer {
+    background: #2b2b2b;
+    color: white;
+    padding: 35px 0 20px;
+    text-align: center;
+    margin-top: 40px;
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 -4px 14px rgba(0,0,0,0.25);
+}
+
+/* Logo */
+footer .footer-logo img {
+    width: 90px;
+    filter: drop-shadow(0 0 4px rgba(255,255,255,0.4));
+    margin-bottom: 12px;
+}
+
+/* Redes sociales */
+footer .social-icons {
+    margin: 18px 0;
+}
+
+footer .social-icons a {
+    display: inline-block;
+    margin: 0 12px;
+    font-size: 26px;
+    color: white;
+    transition: 0.3s;
+}
+
+footer .social-icons a:hover {
+    color: #7fb4ff;
+    transform: translateY(-4px);
+}
+
+/* Texto inferior */
+footer p {
+    font-size: 14px;
+    opacity: 0.85;
+    margin: 6px 0;
+}
+
+footer .dev {
+    font-size: 13px;
+    opacity: 0.7;
+}

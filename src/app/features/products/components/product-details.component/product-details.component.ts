@@ -87,8 +87,6 @@ export class ProductDetailsComponent implements OnInit {
   loadProduct(id: number): void {
     this.loading.set(true);
     this.error.set(null);
-
-    // Cargar producto e imágenes en paralelo
     forkJoin({
       product: this.productService.getProductById(id),
       images: this.productoImagenService.getImagenesByProducto(id)

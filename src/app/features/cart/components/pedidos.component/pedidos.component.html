@@ -1,0 +1,216 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="container mx-auto px-4">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Mis Pedidos</h1>
+      <p class="text-gray-600">Revisa el estado de tus pedidos</p>
+    </div>
+
+    <!-- No logueado -->
+    @if (!isLoggedIn()) {
+      <div class="bg-white rounded-lg shadow-md p-12 text-center">
+        <svg class="w-24 h-24 mx-auto mb-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+        </svg>
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Inicia sesión para ver tus pedidos</h2>
+        <p class="text-gray-600 mb-8">Necesitas iniciar sesión para acceder al historial de tus pedidos</p>
+        <button
+          (click)="irALogin()"
+          class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Iniciar Sesión
+        </button>
+      </div>
+    }
+
+    <!-- Loading -->
+    @if (isLoggedIn() && loading()) {
+      <div class="flex justify-center items-center h-96">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+      </div>
+    }
+
+    <!-- Sin pedidos -->
+    @if (isLoggedIn() && !loading() && pedidos().length === 0) {
+      <div class="bg-white rounded-lg shadow-md p-12 text-center">
+        <svg class="w-24 h-24 mx-auto mb-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+        </svg>
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">No tienes pedidos aún</h2>
+        <p class="text-gray-600 mb-8">Cuando realices tu primera compra, aparecerá aquí</p>
+        <a
+          href="/catalogo"
+          class="inline-block px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Ir al Catálogo
+        </a>
+      </div>
+    }
+
+    <!-- Lista de pedidos -->
+    @if (isLoggedIn() && !loading() && pedidos().length > 0) {
+      <div class="space-y-4">
+        @for (pedido of pedidos(); track pedido.id) {
+          <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <!-- Información del pedido -->
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                  <h3 class="text-xl font-bold text-gray-900">Pedido #{{ pedido.id }}</h3>
+                  <span [class]="'px-3 py-1 rounded-full text-sm font-medium ' + getEstadoClass(pedido.estado)">
+                    {{ pedido.estado }}
+                  </span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>{{ formatDate(pedido.fechaPedido) }}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="font-semibold text-gray-900">{{ formatPrice(pedido.montoTotal) }}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>{{ pedido.direccionEnvio }}, {{ pedido.ciudadEnvio }}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/>
+                    </svg>
+                    <span>{{ pedido.paisEnvio }} - {{ pedido.codigoPostalEnvio }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botón ver detalle -->
+              <div>
+                <button
+                  (click)="verDetalle(pedido)"
+                  class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 whitespace-nowrap"
+                >
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                  </svg>
+                  Ver Detalle
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Modal de Detalles -->
+@if (showDetalles()) {
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" (click)="cerrarDetalles()">
+    <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-auto" (click)="$event.stopPropagation()">
+      <!-- Header del Modal -->
+      <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900">Detalle del Pedido #{{ selectedPedido()?.id }}</h2>
+          @if (selectedPedido()) {
+            <p class="text-sm text-gray-600 mt-1">{{ formatDate(selectedPedido()!.fechaPedido) }}</p>
+          }
+        </div>
+        <button
+          (click)="cerrarDetalles()"
+          class="p-2 hover:bg-gray-100 rounded-full transition-colors"
+        >
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Contenido del Modal -->
+      <div class="p-6">
+        <!-- Loading de detalles -->
+        @if (loadingDetalles()) {
+          <div class="flex justify-center items-center h-64">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+        }
+
+        <!-- Detalles cargados -->
+        @if (!loadingDetalles()) {
+          <!-- Información del pedido -->
+          <div class="bg-gray-50 rounded-lg p-4 mb-6">
+            <h3 class="font-bold text-gray-900 mb-3">Información del Pedido</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+              <div>
+                <span class="text-gray-600">Estado:</span>
+                <span [class]="'ml-2 px-2 py-1 rounded-full text-xs font-medium ' + getEstadoClass(selectedPedido()!.estado)">
+                  {{ selectedPedido()?.estado }}
+                </span>
+              </div>
+              <div>
+                <span class="text-gray-600">Total:</span>
+                <span class="ml-2 font-semibold text-gray-900">{{ formatPrice(selectedPedido()!.montoTotal) }}</span>
+              </div>
+              <div class="md:col-span-2">
+                <span class="text-gray-600">Dirección de envío:</span>
+                <span class="ml-2 text-gray-900">{{ selectedPedido()?.direccionEnvio }}, {{ selectedPedido()?.ciudadEnvio }}, {{ selectedPedido()?.paisEnvio }} - {{ selectedPedido()?.codigoPostalEnvio }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Items del pedido -->
+          <div>
+            <h3 class="font-bold text-gray-900 mb-4">Productos ({{ detallesPedido().length }})</h3>
+            <div class="space-y-3">
+              @for (item of detallesPedido(); track item.id) {
+                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                  <div class="flex items-center gap-4">
+                    <!-- Imagen del producto -->
+                    <div class="flex-shrink-0 w-20 h-20">
+                      <img 
+                        [src]="getProductImage(item.imagenUrl)" 
+                        [alt]="item.idProducto.nombre"
+                        class="w-full h-full object-cover rounded-lg"
+                        (error)="$event.target.src='/assets/placeholder.png'"
+                      />
+                    </div>
+                    <!-- Información del producto -->
+                    <div class="flex-1">
+                      <h4 class="font-semibold text-gray-900">{{ item.idProducto.nombre }}</h4>
+                      <div class="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                        <span>Precio: {{ formatPrice(item.precioUnitario) }}</span>
+                        <span>Cantidad: {{ item.cantidad }}</span>
+                        <span class="font-semibold text-gray-900">Subtotal: {{ formatPrice(item.precioUnitario * item.cantidad) }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Resumen de totales -->
+            <div class="mt-6 border-t pt-4">
+              <div class="space-y-2 max-w-sm ml-auto">
+                <div class="flex justify-between text-sm text-gray-500">
+                  <span>IGV incluido (18%):</span>
+                  <span>{{ formatPrice(igvIncluido) }}</span>
+                </div>
+                <div class="flex justify-between text-lg font-bold text-gray-900 pt-2 border-t">
+                  <span>Total:</span>
+                  <span class="text-blue-600">{{ formatPrice(selectedPedido()!.montoTotal) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

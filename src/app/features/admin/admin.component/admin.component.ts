@@ -28,6 +28,7 @@ export class AdminComponent {
     { icon: '🏷️', label: 'Categorías', route: '/admin/categorias' },
     { icon: '🏢', label: 'Marcas', route: '/admin/marcas' },
     { icon: '👥', label: 'Usuarios', route: '/admin/usuarios' },
+    { icon: '📋', label: 'Pedidos', route: '/admin/pedidos' },
   ];
 
   toggleSidebar(): void {

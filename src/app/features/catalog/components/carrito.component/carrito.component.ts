@@ -150,6 +150,11 @@ export class CarritoComponent implements OnInit {
   async updateQuantity(item: ItemCarritoModel, newQuantity: number): Promise<void> {
     if (newQuantity < 1) return;
 
+    if (item.stockProducto !== undefined && newQuantity > item.stockProducto) {
+      alert(`Solo quedan ${item.stockProducto} unidades disponibles de ${item.nombreProducto}.`);
+      return;
+    }
+
     try {
       await firstValueFrom(this.carritoService.updateItemQuantity(item.id, newQuantity));
       
@@ -176,8 +181,14 @@ export class CarritoComponent implements OnInit {
    */
   increaseQuantity(item: ItemCarritoModel): void {
     const maxStock = item.stockProducto || 999;
+    if (item.stockProducto === 0) {
+      alert(`El producto ${item.nombreProducto} está agotado.`);
+      return;
+    }
     if (item.cantidad < maxStock) {
       this.updateQuantity(item, item.cantidad + 1);
+    } else {
+      alert(`No puedes agregar más de ${maxStock} unidades de ${item.nombreProducto}.`);
     }
   }
 
